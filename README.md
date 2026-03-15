@@ -61,4 +61,6 @@ Planned improvements:
 
 ## Author
 
-Marco Miceli
+Marco [Mrek] Miceli 
+
+Software 🦧 Desinger
