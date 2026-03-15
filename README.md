@@ -25,12 +25,14 @@ This project builds a **server-side proxy** to retrieve and process that data.
 
 ## 🗂️ Project Structure
 
+```text
 fipav_proxy/
 │
 ├── fetch.php      # server-side proxy to retrieve FIPAV data
 ├── index.php      # main page (future UI)
 ├── style.css      # styles
 └── README.md
+```
 
 ## ⚙️ Requirements
 
