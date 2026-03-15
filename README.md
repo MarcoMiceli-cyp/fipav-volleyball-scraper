@@ -16,20 +16,20 @@ http://friulivg.portalefipav.net/risultati-classifiche.aspx
 
 This project builds a **server-side proxy** to retrieve and process that data.
 
-## Features
+## 🚀 Features
 
 - Fetch match results from the FIPAV portal
 - Parse HTML content from the external site
 - Extract match calendar and results
 - Prepare data for integration in a Joomla module
 
-## Project Structure
+## 🗂️ Project Structure
 
 fipav_proxy/
 │
-├── fetch.php # server-side proxy to retrieve FIPAV data
-├── index.php # main page (future UI)
-├── style.css # styles
+├── fetch.php      # server-side proxy to retrieve FIPAV data
+├── index.php      # main page (future UI)
+├── style.css      # styles
 └── README.md
 
 ## ⚙️ Requirements
@@ -38,7 +38,7 @@ fipav_proxy/
 - cURL extension enabled
 - XAMPP or similar local development environment
 
-## 🚀 Local Development
+## 🌱 Local Development
 
 Start Apache in XAMPP and open:
 
