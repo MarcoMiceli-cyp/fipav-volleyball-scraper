@@ -1,0 +1,282 @@
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  color: #0f172a;
+}
+
+.page-header p {
+  margin: 0;
+  color: #4b5563;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.next-match-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.next-match-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.next-match-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.next-match-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.next-match-date {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f4c81;
+}
+
+.next-match-teams {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.team {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.vs {
+  font-size: 14px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.next-match-result {
+  color: #111827;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.scoreboard-team {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.scoreboard-team:first-child {
+  text-align: right;
+}
+
+.scoreboard-team:last-child {
+  text-align: left;
+}
+
+.scoreboard-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.score-result {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  min-width: 72px;
+}
+
+.score-vs {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  background: #e5e7eb;
+  color: #111827;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  min-width: 72px;
+  text-align: center;
+}
+
+.next-match-bottom {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.match-code {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.next-match-card {
+  background: #ffffff;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.next-match-card {
+  background: #ffffff;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.page-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.team-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .next-match-round {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .next-match-date {
+    font-size: 20px;
+  }
+
+  .scoreboard {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .scoreboard-team {
+    font-size: 18px;
+    text-align: center !important;
+  }
+
+  .next-match-bottom {
+    justify-content: center;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+th,
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #0f4c81;
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+}
+
+tr:nth-child(even) td {
+  background: #f9fafb;
+}
+
+.highlight-row td {
+  background: #dbeafe !important;
+  font-weight: 600;
+}
+
+.empty-state {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 16px;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+  }
+
+  .next-match-date {
+    font-size: 18px;
+  }
+
+  .team {
+    font-size: 16px;
+  }
+}

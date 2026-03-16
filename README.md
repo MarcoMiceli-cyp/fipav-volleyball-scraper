@@ -28,6 +28,13 @@ This project builds a **server-side proxy** to retrieve and process that data.
 ```text
 fipav_proxy/
 │
+├── assets/
+│   └── logo.jpg
+├── cache/
+├── src/      # contains all logic (url construction, cUrl, parsing DOM, cache & data return)
+│   └── FipavService.php
+├── templates/      # HTLM page
+│   └── main.php
 ├── fetch.php      # server-side proxy to retrieve FIPAV data
 ├── index.php      # main page (future UI)
 ├── style.css      # styles
@@ -46,7 +53,6 @@ Start Apache in XAMPP and open:
 
 http://localhost/fipav_proxy/fetch.php
 
-
 The script retrieves the raw HTML page from the FIPAV portal.
 
 ## 🔮 Future Development
@@ -61,6 +67,6 @@ Planned improvements:
 
 ## Author
 
-Marco [Mrek] Miceli 
+Marco [Mrek] Miceli
 
 Software 🦧 Desinger
