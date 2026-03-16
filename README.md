@@ -1,253 +1,176 @@
 # 🏐 FIPAV FVG Volleyball Calendar Scraper
 
-This project retrieves volleyball match calendars, upcoming matches, played matches, and standings from the official **FIPAV Friuli Venezia Giulia portal**.
-
-The goal is to extract match information for a specific team and display it in a custom webpage, which will later be integrated into a **Joomla website** as a custom module.
+A server-side PHP proxy that scrapes match schedules, results, and standings for **Tiki-Taka Staranzano** from the official [FIPAV Friuli Venezia Giulia portal](http://www.fipavfvg.it/application/agency.asp?show=gare), and displays them in a custom UI — designed to be integrated as a **Joomla module**.
 
 ---
 
-# 🎯 Project Purpose
+## 📑 Table of Contents
 
-The official website:
+- [How It Works](#-how-it-works)
+- [Features](#-features)
+- [Project Structure](#️-project-structure)
+- [Requirements](#️-requirements)
+- [Installation](#️-installation)
+- [Local Development](#-local-development)
+- [Dynamic Parameters](#-dynamic-parameters)
+- [Planned Joomla Integration](#️-planned-joomla-integration)
 
-http://www.fipavfvg.it/application/agency.asp?show=gare
+---
 
-loads match data inside an iframe pointing to:
+## 🔍 How It Works
 
+The official FIPAV portal loads match data inside an **iframe**:
+
+```
 http://friulivg.portalefipav.net/risultati-classifiche.aspx
+```
 
-Because the data is loaded through an iframe, this project creates a **server-side PHP proxy** that retrieves the data, parses the HTML content, and builds a custom UI.
-
----
-
-# 🚀 Current Features
-
-✔ Fetch match data from the FIPAV portal  
-✔ Parse HTML content using `DOMDocument`  
-✔ Extract structured match data  
-✔ Identify:
-
-- next match
-- future matches
-- played matches
-- standings
-
-✔ Local caching to reduce external requests  
-✔ Dynamic URL filtering parameters  
-✔ Custom frontend UI displaying match information  
-✔ Project structured to be later converted into a Joomla module
+Since the data is iframe-embedded, this project acts as a **PHP proxy** that fetches, parses, and restructures the HTML into a clean, custom interface.
 
 ---
 
-# 🗂️ Project Structure
+## 🚀 Features
 
-```text
+- ✔ Fetch match data from the FIPAV portal via cURL
+- ✔ Parse HTML using `DOMDocument`
+- ✔ Extract and expose structured match data (JSON)
+- ✔ Identify next match, upcoming matches, played matches, and standings
+- ✔ Local JSON caching to reduce repeated external requests
+- ✔ Dynamic URL parameter filtering
+- ✔ Custom frontend UI
+
+---
+
+## 🗂️ Project Structure
+
+```
 fipav_proxy/
-│
 ├── assets/
-│ └── logo.jpg
-│
-├── cache/
-│
+│   └── logo.jpg           # Static resources
+├── cache/                 # Cached JSON responses
 ├── src/
-│ └── FipavService.php
-│
+│   └── FipavService.php   # Core logic: requests, parsing, caching
 ├── templates/
-│ └── main.php
-│
-├── fetch.php
-├── index.php
-├── style.css
+│   └── main.php           # HTML rendering template
+├── fetch.php              # Scraper endpoint — returns structured JSON
+├── index.php              # Main page — loads and displays data
+├── style.css              # Frontend styles
 └── README.md
 ```
 
-### Folder explanation
+---
 
-**assets/**  
-Static resources such as images or logos.
+## ⚙️ Requirements
 
-**cache/**  
-Stores cached JSON responses from the scraper to avoid repeated requests.
-
-**src/**  
-Contains the application logic (URL construction, cURL requests, DOM parsing, caching, and data extraction).
-
-**templates/**  
-Contains the HTML template used to render the page.
-
-**fetch.php**  
-Handles the request to the FIPAV portal and returns structured JSON.
-
-**index.php**  
-Main page that loads the parsed data and displays it in the UI.
-
-**style.css**  
-Frontend styling.
+| Requirement | Version |
+|-------------|---------|
+| PHP | 8.0+ |
+| cURL extension | enabled |
+| Local server | XAMPP (or equivalent) |
 
 ---
 
-# ⚙️ Requirements
+## 🖥️ Installation
 
-The project requires:
+### 1. Download and install XAMPP
 
-- PHP **8.0 or higher**
-- **cURL extension enabled**
-- **XAMPP** or another local PHP development environment
-- Optional:
-  - Git
-  - GitHub
+Get it from [apachefriends.org](https://www.apachefriends.org).  
+During installation, include: **Apache**, **PHP**, and **MySQL** (optional).
 
----
+### 2. Start the server
 
-# 🖥️ Installing XAMPP
+Open the **XAMPP Control Panel** and start **Apache** (and MySQL if needed).  
+Verify it's running at: [http://localhost/](http://localhost/)
 
-### 1 Download XAMPP
+### 3. Verify cURL support
 
-Download from:
-
-https://www.apachefriends.org
-
----
-
-### 2 Install XAMPP
-
-Run the installer and install the following components:
-
-- Apache
-- PHP
-- MySQL (optional but included)
-
----
-
-### 3 Start the server
-
-Open the **XAMPP Control Panel** and start:
-
-- Apache
-- MySQL
-
----
-
-### 4 Verify the server works
-
-Open in your browser:
-
-- http://localhost/
-
-You should see the XAMPP dashboard.
-
----
-
-# 🧪 Verify cURL Support
-
-Create a file:
-
-- curlcheck.php
-
-inside:
-
-- C:\xampp\htdocs\
-
-Add this code:
+Create `C:\xampp\htdocs\curlcheck.php` with:
 
 ```php
 <?php
 echo "curl loaded? ";
 var_dump(extension_loaded('curl'));
-
 echo "<br>";
-
 echo "curl_init exists? ";
 var_dump(function_exists('curl_init'));
 ```
 
-Then open:
+Open [http://localhost/curlcheck.php](http://localhost/curlcheck.php) — expected output:
 
-- http://localhost/curlcheck.php
+```
+curl loaded? bool(true)
+curl_init exists? bool(true)
+```
 
-Expected output should be:
+### 4. Clone the project
 
-- curl loaded? bool(true)
-- curl_init exists? bool(true)
+Place the project in:
+
+```
+C:\xampp\htdocs\fipav_proxy\
+```
+
+---
 
 ## 🌱 Local Development
 
-Project should be into:
+| Step | URL |
+|------|-----|
+| Test the scraper endpoint | http://localhost/fipav_proxy/fetch.php |
+| Open the frontend | http://localhost/fipav_proxy/index.php |
 
-- C:\xampp\htdocs\fipav_proxy\
+The frontend displays: next match · upcoming matches · played matches · standings.
 
-1. Test the scraper endpoint
-
-Open:
-
-- http://localhost/fipav_proxy/fetch.php
-
-2. Open the frontend page
-
-Open:
-
-- http://localhost/fipav_proxy/index.php
-
-The page displays:
-
-- Next match
-- Future matches
-- League standings
-- Played matches
+---
 
 ## 🔧 Dynamic Parameters
 
-The scraper supports URL parameters that match those used by the FIPAV portal.
+The scraper accepts URL parameters mirroring those of the FIPAV portal.
 
-Example:
+**Example:**
+```
+http://localhost/fipav_proxy/fetch.php?StId=2290&CId=85051&SId=2452&PId=7274
+```
 
-- http://localhost/fipav_proxy/fetch.php?StId=2290&CId=85051&SId=2452&PId=7274
+| Parameter    | Description                    |
+|--------------|--------------------------------|
+| `ComitatoId` | Regional federation identifier |
+| `StId`       | Season identifier              |
+| `CId`        | Competition identifier         |
+| `SId`        | Club identifier                |
+| `PId`        | Team participation identifier  |
+| `DataDa`     | Filter by starting date        |
+| `StatoGara`  | Match status filter            |
 
-Supported parameters:
-
-| Parameter  | Description                    |
-| ---------- | ------------------------------ |
-| ComitatoId | Regional federation identifier |
-| StId       | Season identifier              |
-| CId        | Competition identifier         |
-| SId        | Club identifier                |
-| PId        | Team participation identifier  |
-| DataDa     | Filter by starting date        |
-| StatoGara  | Match status filter            |
-
-These allow dynamic filtering of the data.
+---
 
 ## 🏗️ Planned Joomla Integration
 
-This project will later become a Joomla custom module.
+The project is structured for future conversion into a **Joomla custom module**.
 
-Target structure:
-
-```text
+**Target structure:**
+```
 mod_fipavmatches/
-│
 ├── mod_fipavmatches.php
 ├── helper.php
-│
 ├── tmpl/
-│ └── default.php
-│
+│   └── default.php
 ├── media/
-│ └── css/
-│ └── style.css
-│
+│   └── css/
+│       └── style.css
 └── mod_fipavmatches.xml
 ```
 
-Mapping between current project and Joomla module:
+**Migration mapping:**
 
-| Current Project | Joomla Module       |
-| --------------- | ------------------- |
-| fetch.php       | helper.php          |
-| index.php       | tmpl/default.php    |
-| style.css       | media/css/style.css |
+| Current file | Joomla module       |
+|-------------|---------------------|
+| `fetch.php`  | `helper.php`        |
+| `index.php`  | `tmpl/default.php`  |
+| `style.css`  | `media/css/style.css` |
 
-## Author
+---
 
-Marco [Mrek] Miceli
-Software 🦧 Desinger
+## 👤 Author
+
+**Marco "Mrek" Miceli** — Software Designer
