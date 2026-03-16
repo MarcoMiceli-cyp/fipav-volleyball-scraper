@@ -173,4 +173,4 @@ mod_fipavmatches/
 
 ## 👤 Author
 
-**Marco "Mrek" Miceli** — Software Designer
+**Marco "Mrek" Miceli** — Software Designer 🦧
