@@ -10,26 +10,16 @@
         "StatoGara": ""
     },
     "next_match": {
-        "gara": "504",
-        "giornata": "24",
-        "data_ora": "18\/03\/26 20:30",
-        "squadra_casa": "L.W.V.OTTOGALLI LATISANA",
-        "squadra_ospite": "TIKI TAKA STARANZANO",
+        "gara": "512",
+        "giornata": "25",
+        "data_ora": "21\/03\/26 20:00",
+        "squadra_casa": "TIKI TAKA STARANZANO",
+        "squadra_ospite": "FARRAVOLO",
         "risultato": "-",
         "dettagli": " ",
-        "data_iso": "2026-03-18 20:30:00"
+        "data_iso": "2026-03-21 20:00:00"
     },
     "future_matches": [
-        {
-            "gara": "504",
-            "giornata": "24",
-            "data_ora": "18\/03\/26 20:30",
-            "squadra_casa": "L.W.V.OTTOGALLI LATISANA",
-            "squadra_ospite": "TIKI TAKA STARANZANO",
-            "risultato": "-",
-            "dettagli": " ",
-            "data_iso": "2026-03-18 20:30:00"
-        },
         {
             "gara": "512",
             "giornata": "25",
@@ -94,166 +84,166 @@
     "standings": [
         {
             "posizione": "1",
-            "squadra": "TIKI TAKA STARANZANO",
-            "punti": "55",
-            "pg": "23",
-            "pv": "19",
-            "pp": "4",
-            "sf": "62",
-            "ss": "23",
-            "qs": "2,70",
-            "pf": "1968",
-            "ps": "1634",
-            "qp": "1,20",
-            "penalita": "0"
-        },
-        {
-            "posizione": "2",
             "squadra": "OLYMPIA TRIESTE",
-            "punti": "55",
-            "pg": "23",
-            "pv": "19",
+            "punti": "58",
+            "pg": "24",
+            "pv": "20",
             "pp": "4",
-            "sf": "60",
-            "ss": "25",
-            "qs": "2,40",
-            "pf": "1980",
-            "ps": "1692",
+            "sf": "63",
+            "ss": "26",
+            "qs": "2,42",
+            "pf": "2084",
+            "ps": "1774",
             "qp": "1,17",
             "penalita": "0"
         },
         {
-            "posizione": "3",
+            "posizione": "2",
             "squadra": "SOCA LOKANDA DEVETAK ZKB",
-            "punti": "55",
-            "pg": "23",
-            "pv": "18",
+            "punti": "58",
+            "pg": "24",
+            "pv": "19",
             "pp": "5",
-            "sf": "62",
-            "ss": "26",
-            "qs": "2,38",
-            "pf": "2064",
-            "ps": "1729",
+            "sf": "65",
+            "ss": "27",
+            "qs": "2,41",
+            "pf": "2157",
+            "ps": "1818",
             "qp": "1,19",
             "penalita": "0"
         },
         {
-            "posizione": "4",
+            "posizione": "3",
             "squadra": "GIOIELLI DI MAX ZOPPOLA",
-            "punti": "54",
-            "pg": "23",
-            "pv": "18",
+            "punti": "57",
+            "pg": "24",
+            "pv": "19",
             "pp": "5",
-            "sf": "62",
+            "sf": "65",
             "ss": "26",
-            "qs": "2,38",
-            "pf": "2038",
-            "ps": "1861",
+            "qs": "2,50",
+            "pf": "2114",
+            "ps": "1924",
             "qp": "1,10",
+            "penalita": "0"
+        },
+        {
+            "posizione": "4",
+            "squadra": "TIKI TAKA STARANZANO",
+            "punti": "55",
+            "pg": "24",
+            "pv": "19",
+            "pp": "5",
+            "sf": "63",
+            "ss": "26",
+            "qs": "2,42",
+            "pf": "2054",
+            "ps": "1732",
+            "qp": "1,19",
             "penalita": "0"
         },
         {
             "posizione": "5",
             "squadra": "Volley Club TS",
             "punti": "53",
-            "pg": "23",
+            "pg": "24",
             "pv": "18",
-            "pp": "5",
-            "sf": "59",
-            "ss": "24",
-            "qs": "2,46",
-            "pf": "1964",
-            "ps": "1635",
-            "qp": "1,20",
+            "pp": "6",
+            "sf": "60",
+            "ss": "27",
+            "qs": "2,22",
+            "pf": "2053",
+            "ps": "1728",
+            "qp": "1,19",
             "penalita": "0"
         },
         {
             "posizione": "6",
             "squadra": "ASD SPORTING CLUB",
             "punti": "42",
-            "pg": "23",
+            "pg": "24",
             "pv": "13",
-            "pp": "10",
+            "pp": "11",
             "sf": "49",
-            "ss": "37",
-            "qs": "1,32",
-            "pf": "1887",
-            "ps": "1783",
-            "qp": "1,06",
+            "ss": "40",
+            "qs": "1,23",
+            "pf": "1945",
+            "ps": "1861",
+            "qp": "1,05",
             "penalita": "0"
         },
         {
             "posizione": "7",
             "squadra": "CFV - MT ECOSERVICE",
-            "punti": "38",
-            "pg": "23",
-            "pv": "14",
+            "punti": "41",
+            "pg": "24",
+            "pv": "15",
             "pp": "9",
-            "sf": "50",
-            "ss": "41",
-            "qs": "1,22",
-            "pf": "1973",
-            "ps": "1906",
+            "sf": "53",
+            "ss": "42",
+            "qs": "1,26",
+            "pf": "2068",
+            "ps": "1985",
             "qp": "1,04",
             "penalita": "0"
         },
         {
             "posizione": "8",
             "squadra": "ASD PALLAVOLO MOSSA",
-            "punti": "35",
-            "pg": "23",
-            "pv": "11",
+            "punti": "38",
+            "pg": "24",
+            "pv": "12",
             "pp": "12",
-            "sf": "43",
+            "sf": "46",
             "ss": "42",
-            "qs": "1,02",
-            "pf": "1855",
-            "ps": "1857",
-            "qp": "1,00",
+            "qs": "1,10",
+            "pf": "1933",
+            "ps": "1915",
+            "qp": "1,01",
             "penalita": "0"
         },
         {
             "posizione": "9",
             "squadra": "A.S.D. MORARO VOLLEY",
-            "punti": "33",
-            "pg": "23",
-            "pv": "10",
+            "punti": "36",
+            "pg": "24",
+            "pv": "11",
             "pp": "13",
-            "sf": "38",
+            "sf": "41",
             "ss": "45",
-            "qs": "0,84",
-            "pf": "1795",
-            "ps": "1805",
-            "qp": "0,99",
+            "qs": "0,91",
+            "pf": "1870",
+            "ps": "1862",
+            "qp": "1,00",
             "penalita": "0"
         },
         {
             "posizione": "10",
             "squadra": "L.W.V.OTTOGALLI LATISANA",
-            "punti": "27",
-            "pg": "23",
-            "pv": "8",
+            "punti": "30",
+            "pg": "24",
+            "pv": "9",
             "pp": "15",
-            "sf": "43",
-            "ss": "52",
-            "qs": "0,83",
-            "pf": "1998",
-            "ps": "2108",
-            "qp": "0,95",
+            "sf": "46",
+            "ss": "53",
+            "qs": "0,87",
+            "pf": "2096",
+            "ps": "2194",
+            "qp": "0,96",
             "penalita": "0"
         },
         {
             "posizione": "11",
             "squadra": "FARRAVOLO",
             "punti": "24",
-            "pg": "23",
+            "pg": "24",
             "pv": "9",
-            "pp": "14",
+            "pp": "15",
             "sf": "38",
-            "ss": "54",
-            "qs": "0,70",
-            "pf": "1952",
-            "ps": "2089",
+            "ss": "57",
+            "qs": "0,67",
+            "pf": "2009",
+            "ps": "2164",
             "qp": "0,93",
             "penalita": "0"
         },
@@ -261,14 +251,14 @@
             "posizione": "12",
             "squadra": "APC CHIONS",
             "punti": "22",
-            "pg": "23",
+            "pg": "24",
             "pv": "7",
-            "pp": "16",
+            "pp": "17",
             "sf": "32",
-            "ss": "53",
-            "qs": "0,60",
-            "pf": "1752",
-            "ps": "1967",
+            "ss": "56",
+            "qs": "0,57",
+            "pf": "1815",
+            "ps": "2043",
             "qp": "0,89",
             "penalita": "0"
         },
@@ -276,64 +266,77 @@
             "posizione": "13",
             "squadra": "LIBERTAS MARTIGNACCO",
             "punti": "19",
-            "pg": "23",
+            "pg": "24",
             "pv": "7",
-            "pp": "16",
+            "pp": "17",
             "sf": "24",
-            "ss": "55",
-            "qs": "0,44",
-            "pf": "1611",
-            "ps": "1857",
+            "ss": "58",
+            "qs": "0,41",
+            "pf": "1684",
+            "ps": "1940",
             "qp": "0,87",
             "penalita": "0"
         },
         {
             "posizione": "14",
-            "squadra": "CLUB AURORA VOLLEY UDINE",
-            "punti": "17",
-            "pg": "23",
-            "pv": "5",
+            "squadra": "APD RIZZI UDINE",
+            "punti": "18",
+            "pg": "24",
+            "pv": "6",
             "pp": "18",
             "sf": "25",
-            "ss": "57",
-            "qs": "0,44",
-            "pf": "1690",
-            "ps": "1959",
+            "ss": "60",
+            "qs": "0,42",
+            "pf": "1731",
+            "ps": "2014",
             "qp": "0,86",
             "penalita": "0"
         },
         {
             "posizione": "15",
-            "squadra": "APD RIZZI UDINE",
-            "punti": "15",
-            "pg": "23",
+            "squadra": "CLUB AURORA VOLLEY UDINE",
+            "punti": "17",
+            "pg": "24",
             "pv": "5",
-            "pp": "18",
-            "sf": "22",
+            "pp": "19",
+            "sf": "26",
             "ss": "60",
-            "qs": "0,37",
-            "pf": "1648",
-            "ps": "1941",
-            "qp": "0,85",
+            "qs": "0,43",
+            "pf": "1772",
+            "ps": "2063",
+            "qp": "0,86",
             "penalita": "0"
         },
         {
             "posizione": "16",
             "squadra": "ZALET",
             "punti": "8",
-            "pg": "23",
+            "pg": "24",
             "pv": "3",
-            "pp": "20",
-            "sf": "15",
-            "ss": "64",
-            "qs": "0,23",
-            "pf": "1565",
-            "ps": "1917",
+            "pp": "21",
+            "sf": "16",
+            "ss": "67",
+            "qs": "0,24",
+            "pf": "1644",
+            "ps": "2012",
             "qp": "0,82",
             "penalita": "0"
         }
     ],
     "played_matches": [
+        {
+            "gara": "504",
+            "giornata": "24",
+            "data_ora": "18\/03\/26 20:30",
+            "squadra_casa": "L.W.V.OTTOGALLI LATISANA",
+            "squadra_ospite": "TIKI TAKA STARANZANO",
+            "risultato": "3 - 1",
+            "dettagli": "25-1825-2023-2525-23",
+            "data_iso": "2026-03-18 20:30:00",
+            "tiki_taka_sets_won": 1,
+            "tiki_taka_sets_lost": 3,
+            "tiki_taka_won": false
+        },
         {
             "gara": "497",
             "giornata": "23",
@@ -342,7 +345,10 @@
             "squadra_ospite": "ASD SPORTING CLUB",
             "risultato": "3 - 1",
             "dettagli": "25-1725-1514-2525-18",
-            "data_iso": "2026-03-14 20:00:00"
+            "data_iso": "2026-03-14 20:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 1,
+            "tiki_taka_won": true
         },
         {
             "gara": "492",
@@ -352,7 +358,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "0 - 3",
             "dettagli": "13-2510-2522-25",
-            "data_iso": "2026-03-07 20:30:00"
+            "data_iso": "2026-03-07 20:30:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "486",
@@ -362,7 +371,10 @@
             "squadra_ospite": "Volley Club TS",
             "risultato": "3 - 2",
             "dettagli": "25-2121-2523-2525-2315-12",
-            "data_iso": "2026-02-26 21:00:00"
+            "data_iso": "2026-02-26 21:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 2,
+            "tiki_taka_won": true
         },
         {
             "gara": "477",
@@ -372,7 +384,10 @@
             "squadra_ospite": "CFV - MT ECOSERVICE",
             "risultato": "2 - 3",
             "dettagli": "25-2223-2519-2527-254-15",
-            "data_iso": "2026-02-21 20:00:00"
+            "data_iso": "2026-02-21 20:00:00",
+            "tiki_taka_sets_won": 2,
+            "tiki_taka_sets_lost": 3,
+            "tiki_taka_won": false
         },
         {
             "gara": "470",
@@ -382,7 +397,10 @@
             "squadra_ospite": "OLYMPIA TRIESTE",
             "risultato": "3 - 0",
             "dettagli": "25-1525-1425-23",
-            "data_iso": "2026-02-14 20:00:00"
+            "data_iso": "2026-02-14 20:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "462",
@@ -392,7 +410,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "0 - 3",
             "dettagli": "21-2526-2821-25",
-            "data_iso": "2026-02-07 18:30:00"
+            "data_iso": "2026-02-07 18:30:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "453",
@@ -402,7 +423,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "2 - 3",
             "dettagli": "25-2116-2525-2725-237-15",
-            "data_iso": "2026-02-01 18:00:00"
+            "data_iso": "2026-02-01 18:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 2,
+            "tiki_taka_won": true
         },
         {
             "gara": "446",
@@ -412,7 +436,10 @@
             "squadra_ospite": "CLUB AURORA VOLLEY UDINE",
             "risultato": "3 - 0",
             "dettagli": "25-2225-1425-14",
-            "data_iso": "2026-01-29 21:00:00"
+            "data_iso": "2026-01-29 21:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "433",
@@ -422,7 +449,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "2 - 3",
             "dettagli": "25-1825-1517-2522-2510-15",
-            "data_iso": "2026-01-24 19:30:00"
+            "data_iso": "2026-01-24 19:30:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 2,
+            "tiki_taka_won": true
         },
         {
             "gara": "425",
@@ -432,7 +462,10 @@
             "squadra_ospite": "ZALET",
             "risultato": "3 - 0",
             "dettagli": "25-1125-1125-14",
-            "data_iso": "2026-01-17 20:00:00"
+            "data_iso": "2026-01-17 20:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "416",
@@ -442,7 +475,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "0 - 3",
             "dettagli": "21-2517-259-25",
-            "data_iso": "2026-01-10 20:30:00"
+            "data_iso": "2026-01-10 20:30:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "408",
@@ -452,7 +488,10 @@
             "squadra_ospite": "ASD PALLAVOLO MOSSA",
             "risultato": "1 - 3",
             "dettagli": "18-2519-2525-723-25",
-            "data_iso": "2025-12-20 20:00:00"
+            "data_iso": "2025-12-20 20:00:00",
+            "tiki_taka_sets_won": 1,
+            "tiki_taka_sets_lost": 3,
+            "tiki_taka_won": false
         },
         {
             "gara": "405",
@@ -462,7 +501,10 @@
             "squadra_ospite": "APD RIZZI UDINE",
             "risultato": "3 - 0",
             "dettagli": "25-1525-1525-13",
-            "data_iso": "2025-12-13 20:00:00"
+            "data_iso": "2025-12-13 20:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "392",
@@ -472,7 +514,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "1 - 3",
             "dettagli": "25-2317-2523-2516-25",
-            "data_iso": "2025-12-06 20:30:00"
+            "data_iso": "2025-12-06 20:30:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 1,
+            "tiki_taka_won": true
         },
         {
             "gara": "384",
@@ -482,7 +527,10 @@
             "squadra_ospite": "L.W.V.OTTOGALLI LATISANA",
             "risultato": "3 - 0",
             "dettagli": "25-1725-1925-17",
-            "data_iso": "2025-11-29 20:00:00"
+            "data_iso": "2025-11-29 20:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "377",
@@ -492,7 +540,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "3 - 0",
             "dettagli": "25-2127-2528-26",
-            "data_iso": "2025-11-25 20:00:00"
+            "data_iso": "2025-11-25 20:00:00",
+            "tiki_taka_sets_won": 0,
+            "tiki_taka_sets_lost": 3,
+            "tiki_taka_won": false
         },
         {
             "gara": "372",
@@ -502,7 +553,10 @@
             "squadra_ospite": "A.S.D. MORARO VOLLEY",
             "risultato": "3 - 0",
             "dettagli": "25-2125-1326-24",
-            "data_iso": "2025-11-20 21:00:00"
+            "data_iso": "2025-11-20 21:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "366",
@@ -512,7 +566,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "3 - 2",
             "dettagli": "21-2525-2725-1929-2715-9",
-            "data_iso": "2025-11-15 17:00:00"
+            "data_iso": "2025-11-15 17:00:00",
+            "tiki_taka_sets_won": 2,
+            "tiki_taka_sets_lost": 3,
+            "tiki_taka_won": false
         },
         {
             "gara": "357",
@@ -522,7 +579,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "1 - 3",
             "dettagli": "16-2512-2525-1916-25",
-            "data_iso": "2025-11-09 18:00:00"
+            "data_iso": "2025-11-09 18:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 1,
+            "tiki_taka_won": true
         },
         {
             "gara": "350",
@@ -532,7 +592,10 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "0 - 3",
             "dettagli": "24-2619-2521-25",
-            "data_iso": "2025-11-02 17:00:00"
+            "data_iso": "2025-11-02 17:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "342",
@@ -542,7 +605,10 @@
             "squadra_ospite": "LIBERTAS MARTIGNACCO",
             "risultato": "3 - 0",
             "dettagli": "25-2025-1525-19",
-            "data_iso": "2025-10-25 20:00:00"
+            "data_iso": "2025-10-25 20:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         },
         {
             "gara": "333",
@@ -552,7 +618,10 @@
             "squadra_ospite": "GIOIELLI DI MAX ZOPPOLA",
             "risultato": "3 - 2",
             "dettagli": "25-2318-2519-2525-1915-9",
-            "data_iso": "2025-10-16 21:00:00"
+            "data_iso": "2025-10-16 21:00:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 2,
+            "tiki_taka_won": true
         },
         {
             "gara": "326",
@@ -562,7 +631,25 @@
             "squadra_ospite": "TIKI TAKA STARANZANO",
             "risultato": "0 - 3",
             "dettagli": "13-2514-2519-25",
-            "data_iso": "2025-10-11 20:45:00"
+            "data_iso": "2025-10-11 20:45:00",
+            "tiki_taka_sets_won": 3,
+            "tiki_taka_sets_lost": 0,
+            "tiki_taka_won": true
         }
-    ]
+    ],
+    "tiki_taka_stats": {
+        "posizione": "4",
+        "squadra": "TIKI TAKA STARANZANO",
+        "punti": "55",
+        "pg": "24",
+        "pv": "19",
+        "pp": "5",
+        "sf": "63",
+        "ss": "26",
+        "qs": "2,42",
+        "pf": "2054",
+        "ps": "1732",
+        "qp": "1,19",
+        "penalita": "0"
+    }
 }

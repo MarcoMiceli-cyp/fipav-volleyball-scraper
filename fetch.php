@@ -257,6 +257,40 @@ usort($playedMatches, function ($a, $b) {
 /* La prossima partita è la prima tra quelle future */
 $nextMatch = $futureMatches[0] ?? null;
 
+/* Arricchisco ogni partita giocata con i set vinti/persi da Tiki Taka */
+foreach ($playedMatches as &$match) {
+    $isTTHome = stripos($match['squadra_casa'], 'staranzano') !== false
+        || stripos($match['squadra_casa'], 'tiki taka') !== false;
+    $isTTAway = stripos($match['squadra_ospite'], 'staranzano') !== false
+        || stripos($match['squadra_ospite'], 'tiki taka') !== false;
+
+    if (
+        ($isTTHome || $isTTAway)
+        && preg_match('/^(\d+)\s*-\s*(\d+)$/', trim($match['risultato']), $m)
+    ) {
+        $homeSet = (int) $m[1];
+        $awaySet  = (int) $m[2];
+
+        $match['tiki_taka_sets_won']  = $isTTHome ? $homeSet : $awaySet;
+        $match['tiki_taka_sets_lost'] = $isTTHome ? $awaySet  : $homeSet;
+        $match['tiki_taka_won']       = $match['tiki_taka_sets_won'] > $match['tiki_taka_sets_lost'];
+    }
+}
+unset($match);
+
+/* Recupero le statistiche di Tiki Taka dalla classifica */
+$tikiTakaStats = null;
+
+foreach ($standings as $team) {
+    if (
+        stripos($team['squadra'], 'staranzano') !== false
+        || stripos($team['squadra'], 'tiki taka') !== false
+    ) {
+        $tikiTakaStats = $team;
+        break;
+    }
+}
+
 /* Preparo il risultato finale */
 $result = [
     'error' => false,
@@ -269,10 +303,11 @@ $result = [
         'DataDa' => $dataDa,
         'StatoGara' => $statoGara,
     ],
-    'next_match' => $nextMatch,
-    'future_matches' => $futureMatches,
-    'standings' => $standings,
-    'played_matches' => $playedMatches
+    'next_match'      => $nextMatch,
+    'future_matches'  => $futureMatches,
+    'standings'       => $standings,
+    'played_matches'  => $playedMatches,
+    'tiki_taka_stats' => $tikiTakaStats,
 ];
 
 /* Converto in JSON */
