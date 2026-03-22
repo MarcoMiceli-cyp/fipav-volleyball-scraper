@@ -29,7 +29,7 @@ Since the data is iframe-embedded, this project acts as a **PHP proxy** that fet
 
 ---
 
-## Features
+## ✨ Features
 
 - Fetch match data from the FIPAV portal via cURL
 - Parse HTML using `DOMDocument`
