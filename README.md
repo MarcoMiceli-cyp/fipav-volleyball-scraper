@@ -1,19 +1,19 @@
 # 🏐 FIPAV FVG Volleyball Calendar Scraper
 
-A server-side PHP proxy that scrapes match schedules, results, and standings for **Tiki-Taka Staranzano** from the official [FIPAV Friuli Venezia Giulia portal](http://www.fipavfvg.it/application/agency.asp?show=gare), and displays them in a custom UI — designed to be integrated as a **Joomla module**.
+A server-side PHP proxy that scrapes match schedules, results, and standings for **Tiki-Taka Staranzano** from the official [FIPAV Friuli Venezia Giulia portal](http://www.fipavfvg.it/application/agency.asp?show=gare), and displays them in a custom UI — integrated into **Joomla** via iframe embed.
 
 ---
 
 ## 📑 Table of Contents
 
-- [How It Works](#-how-it-works)
-- [Features](#-features)
-- [Project Structure](#️-project-structure)
-- [Requirements](#️-requirements)
-- [Installation](#️-installation)
-- [Local Development](#-local-development)
-- [Dynamic Parameters](#-dynamic-parameters)
-- [Planned Joomla Integration](#️-planned-joomla-integration)
+- [How It Works](#how-it-works)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Local Development](#local-development)
+- [Dynamic Parameters](#dynamic-parameters)
+- [Joomla Integration](#joomla-integration)
 
 ---
 
@@ -29,15 +29,17 @@ Since the data is iframe-embedded, this project acts as a **PHP proxy** that fet
 
 ---
 
-## 🚀 Features
+## Features
 
-- ✔ Fetch match data from the FIPAV portal via cURL
-- ✔ Parse HTML using `DOMDocument`
-- ✔ Extract and expose structured match data (JSON)
-- ✔ Identify next match, upcoming matches, played matches, and standings
-- ✔ Local JSON caching to reduce repeated external requests
-- ✔ Dynamic URL parameter filtering
-- ✔ Custom frontend UI
+- Fetch match data from the FIPAV portal via cURL
+- Parse HTML using `DOMDocument`
+- Extract and expose structured match data (JSON)
+- Identify next match, upcoming matches, played matches, and standings
+- Local JSON caching to reduce repeated external requests
+- Dynamic URL parameter filtering
+- Custom frontend UI with tab navigation (overview, standings, calendar, results)
+- Dark/light theme toggle with `localStorage` persistence
+- `embed.php` — iframe-ready version for Joomla embedding, with auto-resize via `postMessage`
 
 ---
 
@@ -46,15 +48,12 @@ Since the data is iframe-embedded, this project acts as a **PHP proxy** that fet
 ```
 fipav_proxy/
 ├── assets/
-│   └── logo.jpg           # Static resources
-├── cache/                 # Cached JSON responses
-├── src/
-│   └── FipavService.php   # Core logic: requests, parsing, caching
-├── templates/
-│   └── main.php           # HTML rendering template
-├── fetch.php              # Scraper endpoint — returns structured JSON
-├── index.php              # Main page — loads and displays data
-├── style.css              # Frontend styles
+│   └── tiki_taka_logo.jpg   # Team logo
+├── cache/                   # Cached JSON responses (auto-generated)
+├── embed.php                # Iframe-ready UI — used for Joomla embedding
+├── fetch.php                # Scraper endpoint — returns structured JSON
+├── index.php                # Standalone page — loads and displays data
+├── style.css                # Frontend styles (shared by index.php and embed.php)
 └── README.md
 ```
 
@@ -74,12 +73,12 @@ fipav_proxy/
 
 ### 1. Download and install XAMPP
 
-Get it from [apachefriends.org](https://www.apachefriends.org).  
+Get it from [apachefriends.org](https://www.apachefriends.org).
 During installation, include: **Apache**, **PHP**, and **MySQL** (optional).
 
 ### 2. Start the server
 
-Open the **XAMPP Control Panel** and start **Apache** (and MySQL if needed).  
+Open the **XAMPP Control Panel** and start **Apache** (and MySQL if needed).
 Verify it's running at: [http://localhost/](http://localhost/)
 
 ### 3. Verify cURL support
@@ -112,14 +111,13 @@ C:\xampp\htdocs\fipav_proxy\
 
 ---
 
-## 🌱 Local Development
+## 🌱  Local Development
 
 | Step | URL |
 |------|-----|
 | Test the scraper endpoint | http://localhost/fipav_proxy/fetch.php |
-| Open the frontend | http://localhost/fipav_proxy/index.php |
-
-The frontend displays: next match · upcoming matches · played matches · standings.
+| Open the standalone frontend | http://localhost/fipav_proxy/index.php |
+| Preview the embed (iframe) | http://localhost/fipav_proxy/embed.php |
 
 ---
 
@@ -144,30 +142,16 @@ http://localhost/fipav_proxy/fetch.php?StId=2290&CId=85051&SId=2452&PId=7274
 
 ---
 
-## 🏗️ Planned Joomla Integration
+## 🏗️ Joomla Integration
 
-The project is structured for future conversion into a **Joomla custom module**.
+The project is integrated into the Joomla site via an **`<iframe>`** pointing to `embed.php`.
 
-**Target structure:**
-```
-mod_fipavmatches/
-├── mod_fipavmatches.php
-├── helper.php
-├── tmpl/
-│   └── default.php
-├── media/
-│   └── css/
-│       └── style.css
-└── mod_fipavmatches.xml
-```
+`embed.php` is a self-contained, iframe-optimized version of the UI that:
+- strips page margins and sets a transparent background
+- communicates its real height to the parent page via `window.parent.postMessage({ iframeHeight })` for auto-resize
+- shares the same `style.css` and `fetch.php` backend as the standalone version
 
-**Migration mapping:**
-
-| Current file | Joomla module       |
-|-------------|---------------------|
-| `fetch.php`  | `helper.php`        |
-| `index.php`  | `tmpl/default.php`  |
-| `style.css`  | `media/css/style.css` |
+**Joomla-side setup:** add a Custom HTML module with an `<iframe>` tag and a small JS listener that reads the `iframeHeight` message to resize the iframe dynamically.
 
 ---
 
