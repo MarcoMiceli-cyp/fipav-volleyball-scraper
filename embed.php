@@ -276,7 +276,7 @@ $lastMatch = $playedMatches[0] ?? null;
     <script>
         (function () {
             const saved = localStorage.getItem('vb-theme');
-            const t = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            const t = saved || 'light';
             document.documentElement.setAttribute('data-theme', t);
         })();
     </script>
