@@ -1,6 +1,39 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  style.css — Stili del widget campionato Tiki Taka          ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ *
+ * Struttura del file:
+ *  1. Import font Google
+ *  2. Design tokens (variabili CSS per colori, raggi, font)
+ *  3. Tema chiaro (override delle variabili)
+ *  4. Reset base e body
+ *  5. Hero (header grande in index.php)
+ *  6. Page container e section label
+ *  7. Match card (scheda partita)
+ *  8. Standings (classifica)
+ *  9. Calendar list (lista calendario)
+ * 10. Results list (lista risultati)
+ * 11. Grid, Tab, Legend
+ * 12. Responsive (mobile)
+ */
+
+/*
+ * Carico i font da Google Fonts.
+ * Barlow → font principale per testo normale
+ * Barlow Condensed → font compresso per numeri e titoli
+ * wght@400;500;600;700 → i "pesi" (spessori) del font da caricare
+ */
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap');
 
-/* ── Design tokens ───────────────────────────────── */
+/*
+ * ── DESIGN TOKENS (variabili CSS) ────────────────────────────
+ * Le variabili CSS (custom properties) si definiscono con --nome
+ * e si usano con var(--nome). Il vantaggio è che basta cambiarle
+ * qui per aggiornare tutto il sito.
+ *
+ * :root → si applica all'elemento radice (html), quindi è globale.
+ */
 :root {
   --bg:        #0b0c10;
   --surface:   #13141a;
@@ -22,7 +55,15 @@
   --font-cond: 'Barlow Condensed', system-ui, sans-serif;
 }
 
-/* ── Light theme override ────────────────────────── */
+/*
+ * ── TEMA CHIARO (override) ────────────────────────────────────
+ * Quando l'elemento <html> ha l'attributo data-theme="light",
+ * queste variabili SOVRASCRIVONO quelle del tema scuro definite sopra.
+ * Il selettore [data-theme="light"] è più specifico di :root,
+ * quindi ha la precedenza.
+ *
+ * Il tema viene impostato via JavaScript (vedi embed.php).
+ */
 [data-theme="light"] {
   --bg:        #f0f2f5;
   --surface:   #ffffff;
@@ -39,6 +80,12 @@
   --loss:      #dc2626;
 }
 
+/*
+ * Reset universale: rimuove margini e padding da tutti gli elementi.
+ * box-sizing: border-box → il padding e il bordo sono inclusi nella larghezza dichiarata
+ * (senza questo, un elemento con width:100px e padding:10px diventerebbe largo 120px).
+ * *::before e *::after → si applica anche agli pseudo-elementi CSS.
+ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -168,7 +215,12 @@ body {
   background: var(--border-md);
 }
 
-/* ── Page container ──────────────────────────────── */
+/*
+ * ── CONTENITORE PAGINA ───────────────────────────────────────
+ * Limita la larghezza del contenuto a 860px e lo centra.
+ * margin: 0 auto → con larghezza fissa, centra orizzontalmente.
+ * padding → spazio interno in basso e ai lati.
+ */
 .vb-page {
   max-width: 860px;
   margin: 0 auto;
@@ -177,15 +229,25 @@ body {
 
 /* ── Section label ───────────────────────────────── */
 .vb-section-label {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text);
   margin: 28px 0 12px;
   opacity: 0.7;
 }
 
+/*
+ * ── SCHEDA PARTITA ───────────────────────────────────────────
+ * Il componente principale: mostra squadre, punteggio e dettagli.
+ * Struttura HTML:
+ *   .vb-match
+ *     .vb-match-head  (data + badge vittoria/sconfitta)
+ *     .vb-match-body  (squadra casa | punteggio | squadra ospite)
+ *     .vb-sets        (chip con punteggi dei singoli set)
+ *     .vb-match-foot  (numero gara)
+ */
 /* ── Match card ──────────────────────────────────── */
 .vb-match {
   background: var(--card);
@@ -632,6 +694,13 @@ body {
   letter-spacing: 0.04em;
 }
 
+/*
+ * ── GRIGLIA A 2 COLONNE ──────────────────────────────────────
+ * CSS Grid divide il contenuto in 2 colonne.
+ * grid-template-columns: 1.2fr 1fr → la prima colonna è leggermente più larga.
+ * "fr" = "fraction" (frazione dello spazio disponibile).
+ * La variante .equal divide 50% e 50%.
+ */
 /* ── Grid ────────────────────────────────────────── */
 .vb-grid2 {
   display: grid;
@@ -643,6 +712,16 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
+/*
+ * ── SISTEMA DI TAB ───────────────────────────────────────────
+ * I tab sono pulsanti testuali nella barra di navigazione.
+ * Il tab attivo ha una linea colorata sotto (border-bottom).
+ *
+ * .tab-panel { display: none } → i pannelli sono nascosti di default
+ * .tab-panel.active { display: block } → solo quello attivo è visibile
+ *
+ * Il cambio di tab è gestito dal JavaScript in embed.php.
+ */
 /* ── Tabs ────────────────────────────────────────── */
 .vb-tabs {
   display: flex;
@@ -780,6 +859,14 @@ body {
 .vb-results-score.win  { color: var(--win); }
 .vb-results-score.loss { color: var(--loss); }
 
+/*
+ * ── RESPONSIVE (adattamento mobile) ─────────────────────────
+ * @media (max-width: 700px) → queste regole si applicano SOLO
+ * quando la finestra è larga 700px o meno (smartphone/tablet).
+ *
+ * Su mobile: riduco font, logo più piccolo, griglia a 1 colonna.
+ * La griglia a 2 colonne (.vb-grid2) diventa 1 colonna unica.
+ */
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 700px) {
   .vb-hero { padding: 20px 16px; }
