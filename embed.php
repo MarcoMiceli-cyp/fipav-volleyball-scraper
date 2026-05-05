@@ -179,6 +179,9 @@ $totalTeams = count($standings);
 
 /* L'ultima partita giocata è la prima dell'array (già ordinato dalla più recente) */
 $lastMatch = $playedMatches[0] ?? null;
+
+/* true se il campionato è concluso: nessuna partita futura ma ci sono partite giocate */
+$seasonEnded = empty($futureMatches) && !empty($playedMatches);
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -271,6 +274,62 @@ $lastMatch = $playedMatches[0] ?? null;
         }
         .vb-tabs {
             border-radius: 0;
+        }
+        /* Card fine stagione */
+        .vb-season-over {
+            margin: 12px 0 0;
+            padding: 20px;
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .vb-season-over-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            color: var(--accent);
+            border: 1.5px solid var(--accent);
+            border-radius: 20px;
+            padding: 3px 12px;
+            margin-bottom: 10px;
+        }
+        .vb-season-over-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--fg);
+            margin-bottom: 2px;
+        }
+        .vb-season-over-sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        .vb-season-over-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .vb-season-over-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .vb-season-over-num {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+        }
+        .vb-season-over-lbl {
+            font-size: 9px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            margin-top: 3px;
         }
     </style>
     <script>
@@ -456,13 +515,39 @@ $lastMatch = $playedMatches[0] ?? null;
                 <span>Gara n° <?= e($nextMatch['gara']) ?></span>
             </div>
         </div>
+        <?php elseif ($seasonEnded): ?>
+        <div class="vb-season-over">
+            <div class="vb-season-over-badge">Campionato concluso</div>
+            <div class="vb-season-over-title">Stagione 2025/26 terminata</div>
+            <div class="vb-season-over-sub">Serie D Femminile · Girone Unico FVG</div>
+            <?php if ($tikiTakaStats): ?>
+            <div class="vb-season-over-grid">
+                <div class="vb-season-over-cell">
+                    <span class="vb-season-over-num"><?= e($tikiTakaStats['posizione']) ?>°</span>
+                    <span class="vb-season-over-lbl">Posizione finale</span>
+                </div>
+                <div class="vb-season-over-cell">
+                    <span class="vb-season-over-num"><?= e($tikiTakaStats['punti']) ?></span>
+                    <span class="vb-season-over-lbl">Punti totali</span>
+                </div>
+                <div class="vb-season-over-cell">
+                    <span class="vb-season-over-num"><?= e($tikiTakaStats['pv']) ?></span>
+                    <span class="vb-season-over-lbl">Vinte</span>
+                </div>
+                <div class="vb-season-over-cell">
+                    <span class="vb-season-over-num"><?= e($tikiTakaStats['pp']) ?></span>
+                    <span class="vb-season-over-lbl">Perse</span>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
         <?php else: ?>
             <p style="color:var(--muted);font-size:13px;padding:12px 0">Nessuna partita in programma.</p>
         <?php endif; ?>
 
         <!-- PROSSIME GARE -->
+        <?php if (!$seasonEnded && !empty($futureMatches)): ?>
         <div class="vb-section-label" style="margin-top:16px">Prossime gare</div>
-        <?php if (!empty($futureMatches)): ?>
         <div class="vb-cal">
             <div class="vb-cal-head">
                 <span>Calendario</span>
@@ -593,8 +678,49 @@ $lastMatch = $playedMatches[0] ?? null;
     ══════════════════════════════════════════════════ -->
     <div id="tab-calendario" class="tab-panel">
 
+        <?php if ($seasonEnded): ?>
+        <div class="vb-section-label">Riepilogo stagione</div>
+        <div class="vb-results-list">
+            <div class="vb-results-head">
+                <span>Stagione 2025/26 · Tutte le gare</span>
+                <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= count($playedMatches) ?> partite</span>
+            </div>
+            <?php foreach (array_reverse($playedMatches) as $pm): ?>
+            <?php
+            $pmHome = isTikiTakaTeam($pm['squadra_casa'] ?? '');
+            $pmWon  = $pm['tiki_taka_won'] ?? null;
+            $pmDt   = !empty($pm['data_iso']) ? new DateTime($pm['data_iso']) : null;
+            $pmDate = $pmDt ? $pmDt->format('d/m/y') : e($pm['data_ora'] ?? '');
+            $pmSets = !empty($pm['dettagli']) ? parseSetDetails($pm['dettagli']) : [];
+            ?>
+            <div class="vb-results-row">
+                <div class="vb-results-date"><?= $pmDate ?></div>
+                <div class="vb-results-round">G<?= e($pm['giornata']) ?></div>
+                <div class="vb-results-match">
+                    <?php if ($pmHome): ?>
+                        <strong><?= e($pm['squadra_casa']) ?></strong>
+                        <span style="color:var(--hint)"> vs </span>
+                        <?= e($pm['squadra_ospite']) ?>
+                    <?php else: ?>
+                        <?= e($pm['squadra_casa']) ?>
+                        <span style="color:var(--hint)"> vs </span>
+                        <strong><?= e($pm['squadra_ospite']) ?></strong>
+                    <?php endif; ?>
+                </div>
+                <div class="vb-results-score <?= $pmWon === true ? 'win' : ($pmWon === false ? 'loss' : '') ?>">
+                    <?= e($pm['risultato']) ?>
+                </div>
+                <div class="vb-results-dots">
+                    <?php foreach ($pmSets as $s): ?>
+                    <?php $ttWonSet = $pmHome ? ($s[0] > $s[1]) : ($s[1] > $s[0]); ?>
+                    <div class="vb-fd <?= $ttWonSet ? 'vb-fw' : 'vb-fl' ?>"></div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php elseif (!empty($futureMatches)): ?>
         <div class="vb-section-label">Prossime gare</div>
-        <?php if (!empty($futureMatches)): ?>
         <div class="vb-cal">
             <div class="vb-cal-head">
                 <span>Calendario partite</span>
