@@ -1,0 +1,24 @@
+{
+  "terminal.integrated.fontFamily": "DroidSansM Nerd Font",
+  "cucumberautocomplete.steps": ["cypress/support/step_definitions/**/*.js"],
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "🔀 Git Bash 🛠️",
+          "commands": ["git pull"]
+        },
+        {
+          "name": "✴️ Claude AI 👾",
+          "commands": ["claude"],
+          "shouldRunCommands": false
+        },
+        {
+          "name": "🧪 Cypress Test Runner",
+          "commands": ["npx cypress open"],
+          "shouldRunCommands": false
+        }
+      ]
+    }
+  ]
+}
