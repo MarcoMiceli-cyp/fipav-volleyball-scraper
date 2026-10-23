@@ -15,7 +15,8 @@
  *  9. Calendar list (lista calendario)
  * 10. Results list (lista risultati)
  * 11. Grid, Tab, Legend
- * 12. Responsive (mobile)
+ * 12. Icone, countdown, pulsante calendario, grafico punti
+ * 13. Responsive (mobile)
  */
 
 /*
@@ -44,10 +45,13 @@
   --text:      #e8e8e0;
   --muted:     #7a7a88;
   --hint:      #4a4a56;
-  --accent:    #d4a843;
-  --accent2:   #3e7fe8;
+  /* Colori del logo Pallavolo Staranzano: viola → magenta, anello rosso */
+  --accent:    #a98bff;
+  --accent2:   #e46cc4;
+  --brand-red: #ef4444;
+  --brand-grad: linear-gradient(90deg, #6d3fe0, #c02a9b 60%, #e1282d);
   --win:       #35b96a;
-  --loss:      #c94f4f;
+  --loss:      #e05a5a;
   --radius-sm: 6px;
   --radius:    10px;
   --radius-lg: 14px;
@@ -74,10 +78,18 @@
   --text:      #1a1b23;
   --muted:     #6b7280;
   --hint:      #9ca3af;
-  --accent:    #1565c0;
-  --accent2:   #1565c0;
-  --win:       #16a34a;
-  --loss:      #dc2626;
+  --accent:    #5b2fc9;
+  --accent2:   #a8238a;
+  --brand-red: #d61f26;
+  --win:       #15803d;
+  --loss:      #c81e1e;
+}
+
+/* Anello visibile quando si naviga con la tastiera (accessibilità) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /*
@@ -151,6 +163,9 @@ body {
   transition: color .15s, background .15s;
   text-decoration: none;
   user-select: none;
+  flex-shrink: 0;
+  padding: 0;
+  font-family: inherit;
 }
 
 .vb-icon-btn:hover {
@@ -260,6 +275,10 @@ body {
 
 .vb-match:hover { border-color: var(--border-md); }
 
+/* Striscia colorata a sinistra: verde se vinta, rossa se persa */
+.vb-match.is-win  { box-shadow: inset 4px 0 0 var(--win); }
+.vb-match.is-loss { box-shadow: inset 4px 0 0 var(--loss); }
+
 .vb-match-head {
   display: flex;
   align-items: center;
@@ -294,9 +313,9 @@ body {
 }
 
 .vb-badge.upcoming {
-  background: rgba(62,127,232,0.13);
-  color: #6ea3f0;
-  border: 0.5px solid rgba(62,127,232,0.22);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  border: 0.5px solid color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .vb-badge.win {
@@ -336,15 +355,30 @@ body {
 }
 
 .vb-team-icon.home-icon {
-  border-color: rgba(212,168,67,0.45);
+  border: 2px solid var(--accent);
   color: var(--accent);
-  background: rgba(212,168,67,0.07);
+  background: #fff;
+  overflow: hidden;
 }
 
-[data-theme="light"] .vb-team-icon.home-icon {
-  border-color: rgba(21,101,192,0.4);
-  background: rgba(21,101,192,0.08);
+.vb-team-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Etichetta "Casa" / "Trasferta" */
+.vb-pill {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  border-radius: 20px;
+  margin-right: 4px;
+  vertical-align: 1px;
 }
+.vb-pill.home { color: #fff; background: var(--accent); }
+.vb-pill.away { color: var(--muted); border: 1px solid var(--border-md); }
+.vb-team .vb-pill { align-self: flex-start; margin: 0; }
+.vb-team.away .vb-pill { align-self: flex-end; }
 
 .vb-team-name {
   font-size: 14px;
@@ -528,25 +562,48 @@ body {
 .vb-table td.tl { text-align: left; }
 .vb-table tr:last-child td { border-bottom: none; }
 
-.vb-table tr:hover td { background: var(--card-h); }
+/*
+ * Su mobile la tabella scorre in orizzontale dentro .vb-table-wrap,
+ * mentre posizione e squadra restano fisse a sinistra (position: sticky).
+ * Le celle fisse devono avere uno sfondo pieno, quindi la tinta della
+ * riga (--tint) è disegnata come gradiente sopra al colore della card.
+ */
+.vb-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-.vb-table tr.highlight td { background: rgba(62,127,232,0.07); }
-.vb-table tr.highlight:hover td { background: rgba(62,127,232,0.12); }
-.vb-table tr.highlight .vb-pos { color: var(--accent2); }
-.vb-table tr.highlight .vb-pts { color: var(--accent2); }
+.vb-table tbody th {
+  padding: 9px 10px;
+  font-size: 13px; font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.vb-table tbody td,
+.vb-table tbody th {
+  background: linear-gradient(var(--tint, transparent), var(--tint, transparent)), var(--card);
+}
+
+.vb-table thead th { background: var(--card); }
+
+.vb-table .sticky-pos  { position: sticky; left: 0; z-index: 1; width: 34px; min-width: 34px; }
+.vb-table .sticky-team { position: sticky; left: 34px; z-index: 1; min-width: 170px; box-shadow: 1px 0 0 var(--border); }
+
+.vb-table tr:hover { --tint: var(--card-h); }
+
+.vb-table tr.highlight { --tint: color-mix(in srgb, var(--accent) 13%, transparent); }
+.vb-table tr.highlight .vb-pos,
+.vb-table tr.highlight .vb-pts { color: var(--accent); }
 
 .vb-table tr.top3 td { background: rgba(212,168,67,0.04); }
 .vb-table tr.top3 .vb-pos { color: var(--accent); }
 
 [data-theme="light"] .vb-table tr.top3 td { background: rgba(21,101,192,0.04); }
 
-.vb-table tr.promotion td { background: rgba(53,185,106,0.05); }
+.vb-table tr.promotion { --tint: color-mix(in srgb, var(--win) 9%, transparent); }
 .vb-table tr.promotion .vb-pos { color: var(--win); }
-.vb-table tr.promotion:hover td { background: rgba(53,185,106,0.09); }
 
-.vb-table tr.relegation td { background: rgba(201,79,79,0.05); }
+.vb-table tr.relegation { --tint: color-mix(in srgb, var(--loss) 9%, transparent); }
 .vb-table tr.relegation .vb-pos { color: var(--loss); }
-.vb-table tr.relegation:hover td { background: rgba(201,79,79,0.09); }
 
 .vb-pos {
   font-family: var(--font-cond);
@@ -573,8 +630,8 @@ body {
 }
 
 .vb-dot.me {
-  border-color: rgba(62,127,232,0.5);
-  color: var(--accent2);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .vb-team-cell-name {
@@ -694,6 +751,33 @@ body {
   letter-spacing: 0.04em;
 }
 
+.vb-cal-count { font-size: 11px; font-weight: 400; color: var(--muted); }
+
+.vb-cal-row.is-played .vb-cal-day { color: var(--muted); }
+
+/* Risultato a destra nelle righe già giocate: punteggio + pallini set */
+.vb-cal-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.vb-cal-result .vb-results-score { padding-left: 0; }
+
+/* Messaggi di servizio */
+.vb-empty  { color: var(--muted); font-size: 13px; padding: 12px 0; }
+.vb-source { color: var(--hint); font-size: 11px; text-align: center; margin-top: 20px; }
+.vb-stale {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px dashed var(--border-md);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
 /*
  * ── GRIGLIA A 2 COLONNE ──────────────────────────────────────
  * CSS Grid divide il contenuto in 2 colonne.
@@ -740,11 +824,14 @@ body {
 
 .vb-tab {
   padding: 8px 18px;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  border-bottom: 2px solid transparent;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
   white-space: nowrap;
   transition: color .15s, border-color .15s;
   user-select: none;
@@ -755,7 +842,7 @@ body {
 
 .vb-tab.active {
   color: var(--accent);
-  border-bottom-color: var(--accent);
+  border-image: var(--brand-grad) 1;
 }
 
 .tab-panel { display: none; }
@@ -858,6 +945,62 @@ body {
 
 .vb-results-score.win  { color: var(--win); }
 .vb-results-score.loss { color: var(--loss); }
+
+/*
+ * ── ICONE, COUNTDOWN, CALENDARIO, GRAFICO ────────────────────
+ * Le icone Lucide sono SVG inline con stroke="currentColor":
+ * prendono il colore del testo, quindi funzionano in entrambi i temi.
+ */
+.vb-ico { display: inline-block; vertical-align: -2px; flex-shrink: 0; }
+.vb-pill .vb-ico,
+.vb-badge .vb-ico { margin-right: 3px; vertical-align: -1px; }
+
+/* Countdown nel piede della card "Prossima gara" */
+.vb-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.vb-countdown.is-live { color: var(--loss); }
+
+/* Pulsante "Aggiungi al calendario" */
+.vb-cal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 14px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 20px;
+  transition: background .15s;
+}
+.vb-cal-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+
+/* Grafico andamento punti (SVG generato in PHP) */
+.vb-chart {
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.vb-chart .vb-standings-title { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); }
+.vb-chart svg { display: block; width: 100%; max-width: 560px; height: auto; margin: 0 auto; padding: 8px 4px; }
+.vb-chart-grid { stroke: var(--border-md); stroke-width: 1; }
+.vb-chart-area { fill: var(--accent); opacity: .12; }
+.vb-chart-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.vb-chart-dot  { fill: var(--card); stroke: var(--accent); stroke-width: 2; }
+/* Font in unità del viewBox: su mobile l'SVG si rimpicciolisce (~0.8×), quindi parto più grande */
+.vb-chart-axis { fill: var(--muted); font-family: var(--font); font-size: 13px; }
+.vb-chart-val  { fill: var(--text); font-family: var(--font-cond); font-size: 15px; font-weight: 700; }
 
 /*
  * ── RESPONSIVE (adattamento mobile) ─────────────────────────

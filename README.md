@@ -1,160 +1,68 @@
-# 🏐 FIPAV FVG Volleyball Calendar Scraper
+# 🏐 Calendario Pallavolo Tiki Taka Staranzano
 
-A server-side PHP proxy that scrapes match schedules, results, and standings for **Tiki-Taka Staranzano** from the official [FIPAV Friuli Venezia Giulia portal](http://www.fipavfvg.it/application/agency.asp?show=gare), and displays them in a custom UI — integrated into **Joomla** via iframe embed.
+Widget con calendario, risultati e classifica della **Tiki Taka Staranzano** (Serie C Femminile FVG), mostrato nel sito Joomla della squadra tramite iframe.
+I dati vengono presi in tempo reale dal [portale FIPAV FVG](https://friulivg.portalefipav.net/risultati-classifiche.aspx) e ridisegnati in una grafica più leggibile e moderna (dato che l'iframe è del dopoguerra).
 
----
-
-## 📑 Table of Contents
-
-- [How It Works](#how-it-works)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Local Development](#local-development)
-- [Dynamic Parameters](#dynamic-parameters)
-- [Joomla Integration](#joomla-integration)
-
----
-
-## 🔍 How It Works
-
-The official FIPAV portal loads match data inside an **iframe**:
+## Come funziona 🧐
 
 ```
-http://friulivg.portalefipav.net/risultati-classifiche.aspx
+portale FIPAV ──► fetch.php ──► JSON (+ cache) ──► embed.php ──► iframe Joomla
 ```
 
-Since the data is iframe-embedded, this project acts as a **PHP proxy** that fetches, parses, and restructures the HTML into a clean, custom interface.
+| File | Cosa fa |
+|------|---------|
+| `fetch.php` | Scarica la pagina FIPAV, estrae partite e classifica e restituisce un JSON. Tiene una cache di 15 minuti in `cache/`. |
+| `embed.php` | La pagina mostrata nell'iframe, con le tab Panoramica, Classifica, Calendario e Risultati e il tema chiaro/scuro. |
+| `index.php` | Versione standalone (pagina intera) degli stessi dati. |
+| `style.css` | Stili condivisi da `embed.php` e `index.php`. |
 
----
+**Fine campionato:** da maggio FIPAV a un certo punto toglie lo storico. In quel caso `fetch.php` non sovrascrive la cache e continua a servire gli ultimi dati validi (`meta.stale = true`); la pagina mostra "dati aggiornati al …" invece di andare in errore.
 
-## ✨ Features
+## Cambio di stagione / serie 📅
 
-- Fetch match data from the FIPAV portal via cURL
-- Parse HTML using `DOMDocument`
-- Extract and expose structured match data (JSON)
-- Identify next match, upcoming matches, played matches, and standings
-- Local JSON caching to reduce repeated external requests
-- Dynamic URL parameter filtering
-- Custom frontend UI with tab navigation (overview, standings, calendar, results)
-- Dark/light theme toggle with `localStorage` persistence
-- `embed.php` — iframe-ready version for Joomla embedding, with auto-resize via `postMessage`
+1. Sul portale FIPAV seleziona stagione e campionato e premi **CERCA**.
+2. Dall'URL copia `StId` (stagione) e `CId` (campionato).
+3. Aggiornali come valori di default in cima a `fetch.php`.
+4. **Non** usare `DataDa`: filtra le gare per data e nasconde quelle già giocate.
 
----
+Le posizioni di promozione e retrocessione evidenziate in classifica si impostano con `$promoSlots` e `$relegSlots` in cima a `embed.php` (Serie C: 1 promossa, 2 retrocesse).
 
-## 🗂️ Project Structure
+## Sviluppo in locale 💻
 
-```
-fipav_proxy/
-├── assets/
-│   └── tiki_taka_logo.jpg   # Team logo
-├── cache/                   # Cached JSON responses (auto-generated)
-├── embed.php                # Iframe-ready UI — used for Joomla embedding
-├── fetch.php                # Scraper endpoint — returns structured JSON
-├── index.php                # Standalone page — loads and displays data
-├── style.css                # Frontend styles (shared by index.php and embed.php)
-└── README.md
-```
+Serve PHP 8 con cURL (XAMPP va bene). Metti il progetto in `C:\xampp\htdocs\fipav_proxy\`, avvia Apache e apri:
 
----
+- http://localhost/fipav_proxy/fetch.php: il JSON grezzo
+- http://localhost/fipav_proxy/embed.php: il widget
 
-## ⚙️ Requirements
+Per forzare un aggiornamento cancella i file in `cache/`.
 
-| Requirement | Version |
-|-------------|---------|
-| PHP | 8.0+ |
-| cURL extension | enabled |
-| Local server | XAMPP (or equivalent) |
+## Joomla 🧩
 
----
+L'articolo Joomla contiene un `<iframe>` che punta a `embed.php` e un piccolo script che ridimensiona l'iframe quando riceve il messaggio `iframeHeight` (inviato da `embed.php` con `postMessage`).
 
-## 🖥️ Installation
+## Test 🧪
 
-### 1. Download and install XAMPP
+Dato quello che faccio a lavoro, ho deciso di implementare una serie di Test con Cypress e Gherkin in `cypress/e2e/`.
 
-Get it from [apachefriends.org](https://www.apachefriends.org).
-During installation, include: **Apache**, **PHP**, and **MySQL** (optional).
+Per lanciare i test, con Apache avviato, apri un terminale dedicato (es. Windows Terminal) nella cartella del progetto e digita:
 
-### 2. Start the server
-
-Open the **XAMPP Control Panel** and start **Apache** (and MySQL if needed).
-Verify it's running at: [http://localhost/](http://localhost/)
-
-### 3. Verify cURL support
-
-Create `C:\xampp\htdocs\curlcheck.php` with:
-
-```php
-<?php
-echo "curl loaded? ";
-var_dump(extension_loaded('curl'));
-echo "<br>";
-echo "curl_init exists? ";
-var_dump(function_exists('curl_init'));
+```bash
+npm install        # solo la prima volta
+npx cypress open   # interfaccia grafica (oppure `npm test` per eseguirli da riga di comando)
 ```
 
-Open [http://localhost/curlcheck.php](http://localhost/curlcheck.php) — expected output:
+I test non chiamano FIPAV: scrivono il nome di una fixture in `cache/.fixture` e `fetch.php`, solo per richieste da localhost, legge `cypress/fixtures/fipav/<nome>.html` con una cache separata. A fine run il file viene rimosso.
+Struttura in `cypress/support/`:
 
-```
-curl loaded? bool(true)
-curl_init exists? bool(true)
-```
+| Cartella | Cosa contiene |
+|----------|---------------|
+| `step_definitions/` | Le frasi Gherkin (Given/When/Then) che chiamano solo metodi di Action e Check |
+| `actions/` | Classi con le azioni sulla pagina come aprire il widget, cliccare le tab, ecc… |
+| `checks/` | Classi con i controlli sugli elementi della pagina e sul JSON |
+| `repository/` | Classi con gli elementi della pagina mappati come getter |
 
-### 4. Clone the project
+L'estensione VS Code **Cucumber (Gherkin) Full Support** rende il tutto decisamente più leggibile.
 
-Place the project in:
+## 👤 Autore
 
-```
-C:\xampp\htdocs\fipav_proxy\
-```
-
----
-
-## 🌱  Local Development
-
-| Step | URL |
-|------|-----|
-| Test the scraper endpoint | http://localhost/fipav_proxy/fetch.php |
-| Open the standalone frontend | http://localhost/fipav_proxy/index.php |
-| Preview the embed (iframe) | http://localhost/fipav_proxy/embed.php |
-
----
-
-## 🔧 Dynamic Parameters
-
-The scraper accepts URL parameters mirroring those of the FIPAV portal.
-
-**Example:**
-```
-http://localhost/fipav_proxy/fetch.php?StId=2290&CId=85051&SId=2452&PId=7274
-```
-
-| Parameter    | Description                    |
-|--------------|--------------------------------|
-| `ComitatoId` | Regional federation identifier |
-| `StId`       | Season identifier              |
-| `CId`        | Competition identifier         |
-| `SId`        | Club identifier                |
-| `PId`        | Team participation identifier  |
-| `DataDa`     | Filter by starting date        |
-| `StatoGara`  | Match status filter            |
-
----
-
-## 🏗️ Joomla Integration
-
-The project is integrated into the Joomla site via an **`<iframe>`** pointing to `embed.php`.
-
-`embed.php` is a self-contained, iframe-optimized version of the UI that:
-- strips page margins and sets a transparent background
-- communicates its real height to the parent page via `window.parent.postMessage({ iframeHeight })` for auto-resize
-- shares the same `style.css` and `fetch.php` backend as the standalone version
-
-**Joomla-side setup:** add a Custom HTML module with an `<iframe>` tag and a small JS listener that reads the `iframeHeight` message to resize the iframe dynamically.
-
----
-
-## 👤 Author
-
-**Marco "Mrek" Miceli** — Software Designer 🦧
+**Marco "Mrek" Miceli**, Software Designer 🦧

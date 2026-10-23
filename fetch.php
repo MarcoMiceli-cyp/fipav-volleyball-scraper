@@ -24,9 +24,15 @@ header('Content-Type: application/json; charset=utf-8');
  * L'operatore ?? significa: "se il parametro non è presente, usa questo valore di default"
  * Esempio: $_GET['ComitatoId'] ?? '28'  →  prende '28' se il parametro manca
  */
+/*
+ * Default = stagione 2026/27, Serie C Femminile Girone Unico.
+ * A ogni nuova stagione/campionato vanno aggiornati StId e CId
+ * (si leggono dall'URL del portale FIPAV dopo aver premuto CERCA).
+ * NON impostare DataDa: filtra le gare e nasconde quelle già giocate.
+ */
 $comitatoId = $_GET['ComitatoId'] ?? '28';
-$stId       = $_GET['StId']       ?? '2290';
-$cId        = $_GET['CId']        ?? '85051';
+$stId       = $_GET['StId']       ?? '2408';
+$cId        = $_GET['CId']        ?? '92843';
 $sId        = $_GET['SId']        ?? '2452';
 $pId        = $_GET['PId']        ?? '7274';
 $dataDa     = $_GET['DataDa']     ?? '';
@@ -64,6 +70,24 @@ $cacheFile     = __DIR__ . '/cache/fipav_' . $cacheKey . '.json';
 $cacheDuration = 900; /* secondi = 15 minuti */
 
 /*
+ * ── MODALITÀ FIXTURE (solo test Cypress, solo in locale) ─────
+ * Se la richiesta arriva da questo computer ed esiste cache/.fixture
+ * (scritto dai test), leggo cypress/fixtures/fipav/<nome>.html invece di FIPAV.
+ * Uso una cache separata e senza durata, così ogni richiesta rilegge la fixture
+ * e la cache vera resta pulita. In produzione il file .fixture non esiste.
+ */
+$fixtureFile = null;
+if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true) && is_file(__DIR__ . '/cache/.fixture')) {
+    $fixtureName = trim(file_get_contents(__DIR__ . '/cache/.fixture'));
+    /* Solo lettere minuscole, cifre, _ e -: niente path traversal */
+    if (preg_match('/^[a-z0-9_-]+$/', $fixtureName) && is_file(__DIR__ . '/cypress/fixtures/fipav/' . $fixtureName . '.html')) {
+        $fixtureFile   = __DIR__ . '/cypress/fixtures/fipav/' . $fixtureName . '.html';
+        $cacheFile     = __DIR__ . '/cache/fixture.json';
+        $cacheDuration = 0;
+    }
+}
+
+/*
  * Se il file di cache esiste e non è "scaduto", lo restituisco subito.
  * file_exists() controlla se il file esiste sul disco.
  * filemtime() restituisce l'ora dell'ultima modifica del file (in secondi Unix).
@@ -72,6 +96,33 @@ $cacheDuration = 900; /* secondi = 15 minuti */
 if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheDuration)) {
     readfile($cacheFile); /* legge e stampa direttamente il file */
     exit;                 /* termina lo script, non scarico niente */
+}
+
+/*
+ * Funzione: failWithStaleCache()
+ * Usata quando FIPAV non risponde o non mostra più i dati (es. a fine
+ * campionato, quando lo storico viene archiviato).
+ * Se esiste una cache precedente, anche se "scaduta", la restituisco
+ * segnandola come stale: la pagina continua a mostrare gli ultimi dati validi.
+ * Solo se non c'è nessuna cache restituisco un errore.
+ */
+function failWithStaleCache(string $cacheFile, string $message): void
+{
+    if (file_exists($cacheFile)) {
+        $data = json_decode(file_get_contents($cacheFile), true);
+        if (is_array($data)) {
+            $data['meta']['stale'] = true;
+            $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            /* Riscrivo la cache: così FIPAV viene riprovato tra 15 minuti, non a ogni visita */
+            file_put_contents($cacheFile, $json);
+            echo $json;
+            exit;
+        }
+    }
+
+    http_response_code(502); /* "bad gateway": il problema è il sito FIPAV */
+    echo json_encode(['error' => true, 'message' => $message], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
 /*
@@ -136,35 +187,32 @@ function parseMatchDate(string $dateString): ?DateTime
  *
  * curl_init() prepara la richiesta verso l'URL di FIPAV.
  */
-$ch = curl_init($url);
+if ($fixtureFile) {
+    $html = file_get_contents($fixtureFile); /* modalità test: niente FIPAV */
+} else {
+    $ch = curl_init($url);
 
-/*
- * Imposto le opzioni della richiesta:
- *   RETURNTRANSFER → salva la risposta in una variabile (non la stampa)
- *   FOLLOWLOCATION → segue i reindirizzamenti automaticamente (HTTP 301/302)
- *   USERAGENT      → ci presentiamo come un browser normale
- *   TIMEOUT        → se FIPAV non risponde in 20 secondi, abbandono
- */
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_USERAGENT      => 'Mozilla/5.0',
-    CURLOPT_TIMEOUT        => 20,
-]);
+    /*
+     * Imposto le opzioni della richiesta:
+     *   RETURNTRANSFER → salva la risposta in una variabile (non la stampa)
+     *   FOLLOWLOCATION → segue i reindirizzamenti automaticamente (HTTP 301/302)
+     *   USERAGENT      → ci presentiamo come un browser normale
+     *   TIMEOUT        → se FIPAV non risponde in 20 secondi, abbandono
+     */
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_USERAGENT      => 'Mozilla/5.0',
+        CURLOPT_TIMEOUT        => 20,
+    ]);
 
-/* Eseguo la richiesta: $html conterrà il codice HTML della pagina FIPAV */
-$html = curl_exec($ch);
+    /* Eseguo la richiesta: $html conterrà il codice HTML della pagina FIPAV */
+    $html = curl_exec($ch);
 
-/* Se cURL fallisce ($html === false), restituisco un messaggio di errore in JSON */
-if ($html === false) {
-    http_response_code(500); /* codice HTTP "errore interno server" */
-
-    echo json_encode([
-        'error'   => true,
-        'message' => 'Errore cURL: ' . curl_error($ch),
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
-    exit;
+    /* Se cURL fallisce o FIPAV risponde con un errore HTTP, uso l'ultima cache valida */
+    if ($html === false || curl_getinfo($ch, CURLINFO_HTTP_CODE) >= 400) {
+        failWithStaleCache($cacheFile, 'Errore nel collegamento a FIPAV: ' . (curl_error($ch) ?: 'HTTP ' . curl_getinfo($ch, CURLINFO_HTTP_CODE)));
+    }
 }
 
 /*
@@ -228,7 +276,17 @@ foreach ($tables as $table) {
         foreach ($row->childNodes as $child) {
             /* Prendo solo i nodi che sono celle (td o th) */
             if ($child instanceof DOMElement && in_array(strtolower($child->tagName), ['td', 'th'])) {
-                $cells[] = cleanText($child->textContent); /* testo pulito della cella */
+                /*
+                 * I parziali dei set sono in <span class="parziali"> attaccati
+                 * tra loro ("25-1425-21"): li unisco separati da spazio ("25-14 25-21").
+                 */
+                $parziali = [];
+                foreach ($child->getElementsByTagName('span') as $span) {
+                    if ($span->getAttribute('class') === 'parziali') {
+                        $parziali[] = cleanText($span->textContent);
+                    }
+                }
+                $cells[] = $parziali ? implode(' ', $parziali) : cleanText($child->textContent);
             }
         }
 
@@ -327,6 +385,32 @@ foreach ($tables as $table) {
             ];
         }
     }
+}
+
+/*
+ * Se la pagina non contiene né partite né classifica, FIPAV ha
+ * archiviato il campionato (succede da maggio in poi): non sovrascrivo
+ * la cache con dati vuoti, restituisco l'ultima versione valida.
+ */
+if (empty($allMatches) && empty($standings)) {
+    failWithStaleCache($cacheFile, 'Nessun dato disponibile sul portale FIPAV.');
+}
+
+/*
+ * ── NOME STAGIONE E CAMPIONATO ───────────────────────────────
+ * Li leggo dalle <select> del modulo di ricerca FIPAV (opzione selezionata),
+ * così la pagina non deve scriverli a mano a ogni cambio di serie.
+ * Es: "Stagione Sportiva 2026 / 2027" → "2026 / 2027"
+ */
+$xpath      = new DOMXPath($dom);
+$stagione   = cleanText($xpath->evaluate('string(//select[@name="StId"]/option[@selected])'));
+$campionato = cleanText($xpath->evaluate('string(//select[@name="CId"]//option[@selected])'));
+$stagione   = trim(str_ireplace('Stagione Sportiva', '', $stagione));
+
+/* Link FIPAV "Aggiungi a Google Calendar": lo accetto solo se punta davvero a portalefipav.net */
+$calendarUrl = $xpath->evaluate('string(//a[contains(@class,"link_calendar")]/@href)');
+if (!preg_match('#^https://(www\.)?portalefipav\.net/#', $calendarUrl)) {
+    $calendarUrl = '';
 }
 
 /*
@@ -431,6 +515,7 @@ foreach ($standings as $team) {
     if (
         stripos($team['squadra'], 'staranzano') !== false
         || stripos($team['squadra'], 'tiki taka') !== false
+        || stripos($team['squadra'], 'tikitaka') !== false
     ) {
         $tikiTakaStats = $team;
         break; /* trovata! esco dal ciclo subito */
@@ -449,7 +534,14 @@ $result = [
         'DataDa'     => $dataDa,
         'StatoGara'  => $statoGara,
     ],
-    'next_match'      => $nextMatch,      /* prossima partita (o null) */
+    'meta' => [
+        'stagione'      => $stagione,      /* es. "2026 / 2027" */
+        'campionato'    => $campionato,    /* es. "Camp. Regionale C F Girone Unico" */
+        'calendar_url'  => $calendarUrl,   /* link Google Calendar di FIPAV (o "") */
+        'aggiornato_il' => date('Y-m-d H:i:s'),
+        'stale'         => false,          /* true = dati vecchi, FIPAV non disponibile */
+    ],
+    'next_match'     => $nextMatch,      /* prossima partita (o null) */
     'future_matches'  => $futureMatches,  /* tutte le partite future */
     'standings'       => $standings,      /* classifica completa */
     'played_matches'  => $playedMatches,  /* partite giocate (più recente prima) */

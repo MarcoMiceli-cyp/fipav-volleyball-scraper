@@ -1,0 +1,296 @@
+<!--
+Fixture: come in_corso.html ma senza tabelle (campionato archiviato da FIPAV).
+CId=92843
+StId=2408
+-->
+
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="/js/jquery/jquery-ui.css" type="text/css" rel="stylesheet" /><link href="/css/base.min.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" type="text/css" href="/css/modal-menu.css" /><link rel="stylesheet" type="text/css" href="/js/lightslider/css/lightslider.css" /><link rel="stylesheet" type="text/css" href="/js/slicknav/slicknav.css" /><link rel="stylesheet" type="text/css" href="/js/slicknav/slicknav-style.css" /><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.ashx" />
+
+    <script src="/js/jquery/jquery-3.1.0.min.js"></script>
+    <script src="/js/jquery/jquery-ui.js"></script>
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+    <script src="/js/mootools-core-1.5.1.js" type="text/javascript"></script>
+    <script src="/js/mootools-more-1.5.1.js" type="text/javascript"></script>
+    <!--[if (gte IE 6)&(lte IE 8)]>
+      <script type="text/javascript" src="/js/selectivizr.js?nocache=20141120a"></script>
+    <![endif]-->
+    <script type="text/javascript" src="/js/checkform.js?nocache=20160616a"></script>
+    <script type="text/javascript" src="/js/jsManager.js?nocache=20160708a"></script>
+    <script type="text/javascript" src="/js/slideshow.js?nocache=20141120a"></script>
+    <script type="text/javascript" src="/js/MenuMatic_0.68.4.js?nocache=20160616a"></script>
+    <script type="text/javascript" src="/js/cerabox/cerabox.min.js?nocache=20141120a"></script>
+    <script type="text/javascript" src="/js/mediabox/mediaboxAdvanced.js?nocaches=2023"></script>
+    <script type="text/javascript" src="/js/DatePicker/DatePickerFull.js?nocache=20141120a"></script>
+    <script type="text/javascript" src="/js/lightslider/js/lightslider.js"></script>
+    <script type="text/javascript" src="/js/slicknav/jquery.slicknav.min.js"></script>
+    
+    <script type="text/javascript">
+        Locale.use('it-IT');
+
+        window.addEvent('load', function () {
+            equalize('#layout-area2, #layout-area3, #layout-area4');
+            equalize('#layout-area3 .col');
+            $$('.popup-image').cerabox({ group: false, displayTitle: false });
+
+            jQuery('.cerabox-close').click(function () {
+                jQuery('body').css('overflow','')
+            })
+            //console.log('');
+
+
+          
+          getMyBingMaps();
+
+        });
+        window.addEvent('domready', function () {
+            paginazioneBoxAfter();
+
+        });
+        function paginazioneBoxAfter() {
+            $$('.box-file-multipli').cerabox({ group: false, displayTitle: true, mobileView: false });
+            $$('.box-page-ricerca-multipli').cerabox({ group: false, displayTitle: true, mobileView: false });
+            $$('.box-rassegna-multipli').cerabox({ group: false, displayTitle: true, mobileView: false });
+            $$('.aps-cer').cerabox({ group: false, displayTitle: true, mobileView: false });
+        }
+
+    </script>
+
+
+
+    
+    <script type="text/javascript">
+        function Stagione(SId) {
+            CaricaPaginaGet('/risultati-classifiche.aspx?act=settimana', 'SId=' + SId, 'lbSettimana');
+            CaricaPaginaGet('/risultati-classifiche.aspx?act=campionato', 'SId=' + SId, 'lbCampionato', 'Campionato(' + SId + ', \'\');');
+        }
+        function Campionato(SId, CId) {
+            CaricaPaginaGet('/risultati-classifiche.aspx?act=societa', 'SId=' + SId + '&CId=' + CId, 'lbSocieta');
+        }
+        function EsportaXls(ff) {
+            var pp = window.open('about:blank', 'popXls');
+            ff.target = 'popXls';
+            var xAction = ff.action;
+            ff.action = 'esporta-risultati.aspx';
+            ff.submit();
+            ff.target = '';
+            ff.action = xAction;
+            pp.focus();
+        }
+    </script>
+<link href="/files/2150/0/Css/1117/stile.css" type="text/css" rel="stylesheet" /><meta property="og:title" content="FIPAV Friuli Venezia Giulia | Risultati e classifiche" /><meta property="og:type" content="article" /><meta property="og:url" content="https://friulivg.portalefipav.net/risultati-classifiche.aspx?ComitatoId=28&amp;StId=2408&amp;DataDa=&amp;StatoGara=&amp;CId=92843&amp;SId=2452&amp;PId=7274&amp;btFiltro=CERCA" /><meta property="og:image" content="http://friulivg.portalefipav.net/files/2150/Logo/" /><meta property="og:site_name" content="FIPAV Friuli Venezia Giulia" /><meta property="og:description" content="" /><meta property="fb:app_id" content="576743645751508" /><title>
+	FIPAV Friuli Venezia Giulia | Risultati e classifiche
+</title></head>
+<body>
+    
+	
+<div id="layout-container" class=" desktop clsP_7274">
+	<div id="layout-area1" style="width:100%">
+		<div class="col col-4">
+			
+<div id="BoxId_22808" name="BoxId_22808" class="box box-4">
+	<div class=""style="background: transparent;"><div class="box-menu-back"><div class="box-menu menu-horizontal" id="box_menu_hor_22808" style="height: 45px;"></div></div>
+
+<script type="text/javascript">
+//<![CDATA[
+if(document.getElementById('nav')){var myMenu = new MenuMatic({ matchWidthMode: true, hideDelay: 200, stretchMainMenu:true });$('box_menu_hor_22808').setStyle('height','');}
+// ]]>
+</script>
+	</div>
+</div>
+		</div>
+	</div>
+	<div id="layout-area-corpo">
+	<div id="layout-area3" style="width:100%">
+		<div class="col col-4">
+	<h1>Risultati e classifiche delle gare</h1>
+<div id="BoxId_22809" class="box box-4">
+	<div class="box-padding">
+	<form id="filtro" method="get" action="/risultati-classifiche.aspx">
+		<input type="hidden" name="ComitatoId" value="28">
+		<label>
+			Stagione sportiva:<br />
+			<select name="StId" tabindex="1" class="input-select" onchange="Stagione(this.options[this.selectedIndex].value)">
+				<option value="2408" selected="selected">Stagione Sportiva 2026 / 2027</option>
+				<option value="2290">Stagione Sportiva 2025 / 2026</option>
+				<option value="2171">Stagione Sportiva 2024 / 2025</option>
+				<option value="2053">Stagione Sportiva 2023 / 2024</option>
+				<option value="1935">Stagione Sportiva 2022 / 2023</option>
+				<option value="1816">Stagione Sportiva 2021 / 2022</option>
+				<option value="1697">Stagione Sportiva 2020 / 2021</option>
+				<option value="1578">Stagione Sportiva 2019 / 2020</option>
+				<option value="1459">Stagione Sportiva 2018 / 2019</option>
+				<option value="1340">Stagione Sportiva 2017 / 2018</option>
+				<option value="1221">Stagione Sportiva 2016 / 2017</option>
+				<option value="1102">Stagione Sportiva 2015 / 2016</option>
+				<option value="983">Stagione Sportiva 2014 / 2015</option>
+				<option value="864">Stagione Sportiva 2013 / 2014</option>
+				<option value="745">Stagione Sportiva 2012 / 2013</option>
+				<option value="622">Stagione Sportiva 2011 / 2012</option>
+				<option value="150">Stagione Sportiva 2010 / 2011</option>
+				<option value="114">Stagione Sportiva 2009 / 2010</option>
+				<option value="78">Stagione Sportiva 2008 / 2009</option>
+			</select>
+		</label>
+		<label id="lbSettimana">
+			Settimana: <br />
+			<select name="DataDa" class="input-select" tabindex="2">
+				<option value="">Tutte le date..</option>
+				<option value="01/07/2026">dal 01/07/2026 al 05/07/2026</option>
+				<option value="06/07/2026">dal 06/07/2026 al 12/07/2026</option>
+				<option value="13/07/2026">dal 13/07/2026 al 19/07/2026</option>
+				<option value="20/07/2026">dal 20/07/2026 al 26/07/2026</option>
+				<option value="27/07/2026">dal 27/07/2026 al 02/08/2026</option>
+				<option value="03/08/2026">dal 03/08/2026 al 09/08/2026</option>
+				<option value="10/08/2026">dal 10/08/2026 al 16/08/2026</option>
+				<option value="17/08/2026">dal 17/08/2026 al 23/08/2026</option>
+				<option value="24/08/2026">dal 24/08/2026 al 30/08/2026</option>
+				<option value="31/08/2026">dal 31/08/2026 al 06/09/2026</option>
+				<option value="07/09/2026">dal 07/09/2026 al 13/09/2026</option>
+				<option value="14/09/2026">dal 14/09/2026 al 20/09/2026</option>
+				<option value="21/09/2026">dal 21/09/2026 al 27/09/2026</option>
+				<option value="28/09/2026">dal 28/09/2026 al 04/10/2026</option>
+				<option value="05/10/2026">dal 05/10/2026 al 11/10/2026</option>
+				<option value="12/10/2026">dal 12/10/2026 al 18/10/2026</option>
+				<option value="19/10/2026">dal 19/10/2026 al 25/10/2026</option>
+				<option value="26/10/2026">dal 26/10/2026 al 01/11/2026</option>
+				<option value="02/11/2026">dal 02/11/2026 al 08/11/2026</option>
+				<option value="09/11/2026">dal 09/11/2026 al 15/11/2026</option>
+				<option value="16/11/2026">dal 16/11/2026 al 22/11/2026</option>
+				<option value="23/11/2026">dal 23/11/2026 al 29/11/2026</option>
+				<option value="30/11/2026">dal 30/11/2026 al 06/12/2026</option>
+				<option value="07/12/2026">dal 07/12/2026 al 13/12/2026</option>
+				<option value="14/12/2026">dal 14/12/2026 al 20/12/2026</option>
+				<option value="21/12/2026">dal 21/12/2026 al 27/12/2026</option>
+				<option value="28/12/2026">dal 28/12/2026 al 03/01/2027</option>
+				<option value="04/01/2027">dal 04/01/2027 al 10/01/2027</option>
+				<option value="11/01/2027">dal 11/01/2027 al 17/01/2027</option>
+				<option value="18/01/2027">dal 18/01/2027 al 24/01/2027</option>
+				<option value="25/01/2027">dal 25/01/2027 al 31/01/2027</option>
+				<option value="01/02/2027">dal 01/02/2027 al 07/02/2027</option>
+				<option value="08/02/2027">dal 08/02/2027 al 14/02/2027</option>
+				<option value="15/02/2027">dal 15/02/2027 al 21/02/2027</option>
+				<option value="22/02/2027">dal 22/02/2027 al 28/02/2027</option>
+				<option value="01/03/2027">dal 01/03/2027 al 07/03/2027</option>
+				<option value="08/03/2027">dal 08/03/2027 al 14/03/2027</option>
+				<option value="15/03/2027">dal 15/03/2027 al 21/03/2027</option>
+				<option value="22/03/2027">dal 22/03/2027 al 28/03/2027</option>
+				<option value="29/03/2027">dal 29/03/2027 al 04/04/2027</option>
+				<option value="05/04/2027">dal 05/04/2027 al 11/04/2027</option>
+				<option value="12/04/2027">dal 12/04/2027 al 18/04/2027</option>
+				<option value="19/04/2027">dal 19/04/2027 al 25/04/2027</option>
+				<option value="26/04/2027">dal 26/04/2027 al 02/05/2027</option>
+				<option value="03/05/2027">dal 03/05/2027 al 09/05/2027</option>
+				<option value="10/05/2027">dal 10/05/2027 al 16/05/2027</option>
+				<option value="17/05/2027">dal 17/05/2027 al 23/05/2027</option>
+				<option value="24/05/2027">dal 24/05/2027 al 30/05/2027</option>
+				<option value="31/05/2027">dal 31/05/2027 al 06/06/2027</option>
+				<option value="07/06/2027">dal 07/06/2027 al 13/06/2027</option>
+				<option value="14/06/2027">dal 14/06/2027 al 20/06/2027</option>
+				<option value="21/06/2027">dal 21/06/2027 al 27/06/2027</option>
+				<option value="28/06/2027">dal 28/06/2027 al 30/06/2027</option>
+			</select>
+		</label>
+		<label class="size-0_5">
+			Stato gara:<br />
+			<select name="StatoGara" class="input-select-0_5" tabindex="3">
+				<option value="">Tutti..</option>
+				<option value="1">Disputate</option>
+				<option value="0">Da disputare</option>
+			</select>
+		</label>
+		<label id="lbCampionato" class="size-3">
+			Campionato:<br />
+			<select name="CId" class="input-select-3" tabindex="4" onchange="Campionato(2408, this.options[this.selectedIndex].value)">
+					<option value="">Tutti i campionati..</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale C F">
+					<option value="92843" selected="selected">Camp. Regionale C F Girone Unico</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale C M">
+					<option value="92844">Camp. Regionale C M Girone Unico</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale D F">
+					<option value="92845">Camp. Regionale D F Girone Unico</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale D M">
+					<option value="92846">Camp. Regionale D M Girone Unico</option>
+				</optgroup>
+				<optgroup label="Coppa Regionale Femminile">
+					<option value="92837">Coppa Regionale Femminile Girone A</option>
+					<option value="92838">Coppa Regionale Femminile Girone B</option>
+					<option value="92839">Coppa Regionale Femminile Girone C</option>
+					<option value="92862">Coppa Regionale Femminile Girone D</option>
+					<option value="92848">Coppa Regionale Femminile Semifinali</option>
+					<option value="92849">Coppa Regionale Femminile Finale</option>
+				</optgroup>
+				<optgroup label="Coppa Regionale Maschile">
+					<option value="92840">Coppa Regionale Maschile Girone A</option>
+					<option value="92841">Coppa Regionale Maschile Girone B</option>
+					<option value="92842">Coppa Regionale Maschile Girone C</option>
+					<option value="92850">Coppa Regionale Maschile Semifinali</option>
+					<option value="92852">Coppa Regionale Maschile Finale</option>
+				</optgroup>
+				<optgroup label="SUPERCOPPA B2 FVG">
+					<option value="92836">SUPERCOPPA B2 FVG FINALE</option>
+					<option value="92835">SUPERCOPPA B2 FVG TRIANGOLARE</option>
+			</select>
+		</label>
+		<label id="lbSocieta" class="size-2">
+			Società:<br />
+			<select name="SId" class="input-select-2" tabindex="5">
+					<option value="">Tutte le societ&agrave;..</option>
+					<option value="3792">A.S.D. OLYMPIA TRIESTE MUGGIA</option>
+					<option value="2452" selected="selected">A.S.D. PALLAVOLO STARANZANO</option>
+					<option value="2475">APD ROVEREDANA VIS ET VIRTUS</option>
+					<option value="2484">ASD - C.S.D. SOKOL</option>
+					<option value="2460">ASD UNIONE SPORTIVA CORDENONS</option>
+					<option value="2569">ASS.SPORT.DILETT.VIVIL</option>
+					<option value="2524">C.S.R. CHEI DE VILE Vilalte ASD</option>
+					<option value="2556">CENTRO SPORT.ITALIANO TARCENTO</option>
+					<option value="2476">GIS VOLLEY SACILE A.S.D.</option>
+					<option value="2552">PAV NATISONIA A.S.D.</option>
+					<option value="2532">POL.LIBERTAS MARTIGNACCO S.S.D. a R.L.</option>
+					<option value="5295">S.C.S.D. ROJALKENNEDY</option>
+					<option value="2550">S.D. PALLAVOLO SANGIORGINA</option>
+					<option value="2548">STELLA VOLLEY A.S.D.</option>
+			</select>
+		</label>
+		<label class="size-0_5">
+			&nbsp;<br />
+			<input type="hidden" name="PId" value="7274" />
+			<input type="submit" name="btFiltro" value="CERCA" class="button bt-search" style="width:100px;" />
+		</label>
+		<label class="size-0_5">
+			&nbsp;<br />
+			<input type="button" name="btXls" onclick="EsportaXls(this.form);" value="Esporta" class="button bt-excel" style="width:100px;" />
+		</label>
+	</form>
+
+
+<script type="text/javascript">
+	window.addEvent('domready', function () {
+		var tip = new Tips('.tips', { className: 'risultati-tips' });
+		$$('.link_classifica').each(function(el){ el.addEvent('click', function(){ Apri('','', this.href, 'cla');return false; }); });
+	});
+</script>
+	</div>
+	</div>
+		</div>
+	</div>
+	</div>
+	<div id="layout-area5" style="width:100%">
+		<div class="col col-4">
+		</div>
+	</div>
+</div>
+
+    <p class="pw-credito" style="text-align:center;margin:5px auto 15px;font-size:11px;">Sito realizzato con <a href="https://www.powersport.it" target="_blank">PowerSPORT</a> - gestionale per societ&agrave; sportive</p>
+
+<!--Pagina generata in 00:00:00.0312526 secondi-->
+</body>
+</html>
+

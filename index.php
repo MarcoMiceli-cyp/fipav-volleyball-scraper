@@ -23,7 +23,10 @@
  * json_decode(..., true) converte il JSON in array PHP associativo.
  *   Il secondo parametro "true" → restituisce array invece di oggetto.
  */
-$json = file_get_contents('http://localhost/fipav_proxy/fetch.php');
+$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
+         . '://' . $_SERVER['HTTP_HOST']
+         . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+$json = @file_get_contents($baseUrl . '/fetch.php');
 $data = json_decode($json, true);
 
 /* Se i dati non arrivano o contengono un errore, blocco tutto */
@@ -47,6 +50,7 @@ $futureMatches = $data['future_matches']  ?? [];   /* partite future */
 $standings     = $data['standings']       ?? [];   /* classifica */
 $playedMatches = $data['played_matches']  ?? [];   /* partite giocate */
 $tikiTakaStats = $data['tiki_taka_stats'] ?? null; /* stats Tiki Taka */
+$meta          = $data['meta']            ?? [];   /* stagione e campionato */
 
 /*
  * ── FUNZIONI DI SUPPORTO ─────────────────────────────────────
@@ -77,8 +81,22 @@ function e(?string $v): string
 function isTikiTakaTeam(string $name): bool
 {
     return stripos($name, 'staranzano') !== false
-        || stripos($name, 'tiki taka')  !== false;
+        || stripos($name, 'tiki taka')  !== false
+        || stripos($name, 'tikitaka')   !== false;
 }
+
+/* "Camp. Regionale C F Girone Unico" → "Serie C Femminile · Girone Unico" (vedi embed.php) */
+function campLabel(string $c): string
+{
+    if (preg_match('/Regionale\s+([A-D])\s+([FM])\b\s*(.*)$/i', $c, $m)) {
+        $label = 'Serie ' . strtoupper($m[1]) . (strtoupper($m[2]) === 'F' ? ' Femminile' : ' Maschile');
+        return $m[3] !== '' ? $label . ' · ' . $m[3] : $label;
+    }
+    return $c;
+}
+
+$campionato = campLabel($meta['campionato'] ?? 'Campionato Regionale FVG');
+$stagione   = str_replace(' ', '', $meta['stagione'] ?? '');
 
 /*
  * Funzione: initials()
@@ -236,12 +254,12 @@ $lastMatch = $playedMatches[0] ?? null;
             <div>
                 <div class="vb-hero-info">
                     <h1>Tiki Taka Staranzano</h1>
-                    <p>A.S.D. Pallavolo Staranzano · Serie D Femminile · Girone Unico FVG</p>
+                    <p>A.S.D. Pallavolo Staranzano · <?= e($campionato) ?></p>
                 </div>
 
                 <?php if ($tikiTakaStats): ?>
                 <!--
-                    <?php if (...): ?> → blocco PHP condizionale.
+                    if (...): → blocco PHP condizionale.
                     Mostra le statistiche SOLO se $tikiTakaStats non è null.
                     Se fetch.php non ha trovato Tiki Taka in classifica, non mostra nulla.
                 -->
@@ -251,7 +269,7 @@ $lastMatch = $playedMatches[0] ?? null;
                     <div class="vb-stat">
                         <span class="vb-stat-num"><?= e($tikiTakaStats['posizione']) ?>°</span>
                         <!--
-                            <?= ... ?> è la forma breve di <?php echo ... ?>
+                            "short echo" è la forma breve di "php echo"
                             e() protegge il valore da XSS prima di stamparlo
                         -->
                         <span class="vb-stat-lbl">Posizione</span>
@@ -554,7 +572,7 @@ $lastMatch = $playedMatches[0] ?? null;
                 <?php if (!empty($standings)): ?>
                 <div class="vb-standings">
                     <div class="vb-standings-head">
-                        <span class="vb-standings-title">Girone Unico · FVG</span>
+                        <span class="vb-standings-title"><?= e($campionato) ?></span>
                         <span class="vb-standings-sub">Giornata <?= e($tikiTakaStats['pg'] ?? '') ?></span>
                     </div>
                     <table class="vb-table">
@@ -632,7 +650,7 @@ $lastMatch = $playedMatches[0] ?? null;
                 <div class="vb-cal">
                     <div class="vb-cal-head">
                         <span>Calendario</span>
-                        <span style="font-size:11px;font-weight:400;color:var(--muted)">Serie D</span>
+                        <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= e($campionato) ?></span>
                     </div>
 
                     <?php foreach ($futureMatches as $fm): ?>
@@ -703,7 +721,7 @@ $lastMatch = $playedMatches[0] ?? null;
         <?php if (!empty($standings)): ?>
         <div class="vb-standings">
             <div class="vb-standings-head">
-                <span class="vb-standings-title">Girone Unico · FVG</span>
+                <span class="vb-standings-title"><?= e($campionato) ?></span>
                 <span class="vb-standings-sub">Giornata <?= e($tikiTakaStats['pg'] ?? '') ?> · <?= $totalTeams ?> squadre</span>
             </div>
             <table class="vb-table">
@@ -840,7 +858,7 @@ $lastMatch = $playedMatches[0] ?? null;
         <?php if (!empty($playedMatches)): ?>
         <div class="vb-results-list">
             <div class="vb-results-head">
-                <span>Stagione 2025/26</span>
+                <span>Stagione <?= e($stagione) ?></span>
                 <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= count($playedMatches) ?> partite</span>
             </div>
 

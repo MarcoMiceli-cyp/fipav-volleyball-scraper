@@ -1,0 +1,935 @@
+<!--
+Fixture: come in_corso.html ma con la gara della giornata 2 giocata il 20/10/26 (0-3), per il grafico punti.
+CId=92843
+StId=2408
+-->
+
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="/js/jquery/jquery-ui.css" type="text/css" rel="stylesheet" /><link href="/css/base.min.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" type="text/css" href="/css/modal-menu.css" /><link rel="stylesheet" type="text/css" href="/js/lightslider/css/lightslider.css" /><link rel="stylesheet" type="text/css" href="/js/slicknav/slicknav.css" /><link rel="stylesheet" type="text/css" href="/js/slicknav/slicknav-style.css" /><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.ashx" />
+
+    <script src="/js/jquery/jquery-3.1.0.min.js"></script>
+    <script src="/js/jquery/jquery-ui.js"></script>
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+    <script src="/js/mootools-core-1.5.1.js" type="text/javascript"></script>
+    <script src="/js/mootools-more-1.5.1.js" type="text/javascript"></script>
+    <!--[if (gte IE 6)&(lte IE 8)]>
+      <script type="text/javascript" src="/js/selectivizr.js?nocache=20141120a"></script>
+    <![endif]-->
+    <script type="text/javascript" src="/js/checkform.js?nocache=20160616a"></script>
+    <script type="text/javascript" src="/js/jsManager.js?nocache=20160708a"></script>
+    <script type="text/javascript" src="/js/slideshow.js?nocache=20141120a"></script>
+    <script type="text/javascript" src="/js/MenuMatic_0.68.4.js?nocache=20160616a"></script>
+    <script type="text/javascript" src="/js/cerabox/cerabox.min.js?nocache=20141120a"></script>
+    <script type="text/javascript" src="/js/mediabox/mediaboxAdvanced.js?nocaches=2023"></script>
+    <script type="text/javascript" src="/js/DatePicker/DatePickerFull.js?nocache=20141120a"></script>
+    <script type="text/javascript" src="/js/lightslider/js/lightslider.js"></script>
+    <script type="text/javascript" src="/js/slicknav/jquery.slicknav.min.js"></script>
+    
+    <script type="text/javascript">
+        Locale.use('it-IT');
+
+        window.addEvent('load', function () {
+            equalize('#layout-area2, #layout-area3, #layout-area4');
+            equalize('#layout-area3 .col');
+            $$('.popup-image').cerabox({ group: false, displayTitle: false });
+
+            jQuery('.cerabox-close').click(function () {
+                jQuery('body').css('overflow','')
+            })
+            //console.log('');
+
+
+          
+          getMyBingMaps();
+
+        });
+        window.addEvent('domready', function () {
+            paginazioneBoxAfter();
+
+        });
+        function paginazioneBoxAfter() {
+            $$('.box-file-multipli').cerabox({ group: false, displayTitle: true, mobileView: false });
+            $$('.box-page-ricerca-multipli').cerabox({ group: false, displayTitle: true, mobileView: false });
+            $$('.box-rassegna-multipli').cerabox({ group: false, displayTitle: true, mobileView: false });
+            $$('.aps-cer').cerabox({ group: false, displayTitle: true, mobileView: false });
+        }
+
+    </script>
+
+
+
+    
+    <script type="text/javascript">
+        function Stagione(SId) {
+            CaricaPaginaGet('/risultati-classifiche.aspx?act=settimana', 'SId=' + SId, 'lbSettimana');
+            CaricaPaginaGet('/risultati-classifiche.aspx?act=campionato', 'SId=' + SId, 'lbCampionato', 'Campionato(' + SId + ', \'\');');
+        }
+        function Campionato(SId, CId) {
+            CaricaPaginaGet('/risultati-classifiche.aspx?act=societa', 'SId=' + SId + '&CId=' + CId, 'lbSocieta');
+        }
+        function EsportaXls(ff) {
+            var pp = window.open('about:blank', 'popXls');
+            ff.target = 'popXls';
+            var xAction = ff.action;
+            ff.action = 'esporta-risultati.aspx';
+            ff.submit();
+            ff.target = '';
+            ff.action = xAction;
+            pp.focus();
+        }
+    </script>
+<link href="/files/2150/0/Css/1117/stile.css" type="text/css" rel="stylesheet" /><meta property="og:title" content="FIPAV Friuli Venezia Giulia | Risultati e classifiche" /><meta property="og:type" content="article" /><meta property="og:url" content="https://friulivg.portalefipav.net/risultati-classifiche.aspx?ComitatoId=28&amp;StId=2408&amp;DataDa=&amp;StatoGara=&amp;CId=92843&amp;SId=2452&amp;PId=7274&amp;btFiltro=CERCA" /><meta property="og:image" content="http://friulivg.portalefipav.net/files/2150/Logo/" /><meta property="og:site_name" content="FIPAV Friuli Venezia Giulia" /><meta property="og:description" content="" /><meta property="fb:app_id" content="576743645751508" /><title>
+	FIPAV Friuli Venezia Giulia | Risultati e classifiche
+</title></head>
+<body>
+    
+	
+<div id="layout-container" class=" desktop clsP_7274">
+	<div id="layout-area1" style="width:100%">
+		<div class="col col-4">
+			
+<div id="BoxId_22808" name="BoxId_22808" class="box box-4">
+	<div class=""style="background: transparent;"><div class="box-menu-back"><div class="box-menu menu-horizontal" id="box_menu_hor_22808" style="height: 45px;"></div></div>
+
+<script type="text/javascript">
+//<![CDATA[
+if(document.getElementById('nav')){var myMenu = new MenuMatic({ matchWidthMode: true, hideDelay: 200, stretchMainMenu:true });$('box_menu_hor_22808').setStyle('height','');}
+// ]]>
+</script>
+	</div>
+</div>
+		</div>
+	</div>
+	<div id="layout-area-corpo">
+	<div id="layout-area3" style="width:100%">
+		<div class="col col-4">
+	<h1>Risultati e classifiche delle gare</h1>
+<div id="BoxId_22809" class="box box-4">
+	<div class="box-padding">
+	<form id="filtro" method="get" action="/risultati-classifiche.aspx">
+		<input type="hidden" name="ComitatoId" value="28">
+		<label>
+			Stagione sportiva:<br />
+			<select name="StId" tabindex="1" class="input-select" onchange="Stagione(this.options[this.selectedIndex].value)">
+				<option value="2408" selected="selected">Stagione Sportiva 2026 / 2027</option>
+				<option value="2290">Stagione Sportiva 2025 / 2026</option>
+				<option value="2171">Stagione Sportiva 2024 / 2025</option>
+				<option value="2053">Stagione Sportiva 2023 / 2024</option>
+				<option value="1935">Stagione Sportiva 2022 / 2023</option>
+				<option value="1816">Stagione Sportiva 2021 / 2022</option>
+				<option value="1697">Stagione Sportiva 2020 / 2021</option>
+				<option value="1578">Stagione Sportiva 2019 / 2020</option>
+				<option value="1459">Stagione Sportiva 2018 / 2019</option>
+				<option value="1340">Stagione Sportiva 2017 / 2018</option>
+				<option value="1221">Stagione Sportiva 2016 / 2017</option>
+				<option value="1102">Stagione Sportiva 2015 / 2016</option>
+				<option value="983">Stagione Sportiva 2014 / 2015</option>
+				<option value="864">Stagione Sportiva 2013 / 2014</option>
+				<option value="745">Stagione Sportiva 2012 / 2013</option>
+				<option value="622">Stagione Sportiva 2011 / 2012</option>
+				<option value="150">Stagione Sportiva 2010 / 2011</option>
+				<option value="114">Stagione Sportiva 2009 / 2010</option>
+				<option value="78">Stagione Sportiva 2008 / 2009</option>
+			</select>
+		</label>
+		<label id="lbSettimana">
+			Settimana: <br />
+			<select name="DataDa" class="input-select" tabindex="2">
+				<option value="">Tutte le date..</option>
+				<option value="01/07/2026">dal 01/07/2026 al 05/07/2026</option>
+				<option value="06/07/2026">dal 06/07/2026 al 12/07/2026</option>
+				<option value="13/07/2026">dal 13/07/2026 al 19/07/2026</option>
+				<option value="20/07/2026">dal 20/07/2026 al 26/07/2026</option>
+				<option value="27/07/2026">dal 27/07/2026 al 02/08/2026</option>
+				<option value="03/08/2026">dal 03/08/2026 al 09/08/2026</option>
+				<option value="10/08/2026">dal 10/08/2026 al 16/08/2026</option>
+				<option value="17/08/2026">dal 17/08/2026 al 23/08/2026</option>
+				<option value="24/08/2026">dal 24/08/2026 al 30/08/2026</option>
+				<option value="31/08/2026">dal 31/08/2026 al 06/09/2026</option>
+				<option value="07/09/2026">dal 07/09/2026 al 13/09/2026</option>
+				<option value="14/09/2026">dal 14/09/2026 al 20/09/2026</option>
+				<option value="21/09/2026">dal 21/09/2026 al 27/09/2026</option>
+				<option value="28/09/2026">dal 28/09/2026 al 04/10/2026</option>
+				<option value="05/10/2026">dal 05/10/2026 al 11/10/2026</option>
+				<option value="12/10/2026">dal 12/10/2026 al 18/10/2026</option>
+				<option value="19/10/2026">dal 19/10/2026 al 25/10/2026</option>
+				<option value="26/10/2026">dal 26/10/2026 al 01/11/2026</option>
+				<option value="02/11/2026">dal 02/11/2026 al 08/11/2026</option>
+				<option value="09/11/2026">dal 09/11/2026 al 15/11/2026</option>
+				<option value="16/11/2026">dal 16/11/2026 al 22/11/2026</option>
+				<option value="23/11/2026">dal 23/11/2026 al 29/11/2026</option>
+				<option value="30/11/2026">dal 30/11/2026 al 06/12/2026</option>
+				<option value="07/12/2026">dal 07/12/2026 al 13/12/2026</option>
+				<option value="14/12/2026">dal 14/12/2026 al 20/12/2026</option>
+				<option value="21/12/2026">dal 21/12/2026 al 27/12/2026</option>
+				<option value="28/12/2026">dal 28/12/2026 al 03/01/2027</option>
+				<option value="04/01/2027">dal 04/01/2027 al 10/01/2027</option>
+				<option value="11/01/2027">dal 11/01/2027 al 17/01/2027</option>
+				<option value="18/01/2027">dal 18/01/2027 al 24/01/2027</option>
+				<option value="25/01/2027">dal 25/01/2027 al 31/01/2027</option>
+				<option value="01/02/2027">dal 01/02/2027 al 07/02/2027</option>
+				<option value="08/02/2027">dal 08/02/2027 al 14/02/2027</option>
+				<option value="15/02/2027">dal 15/02/2027 al 21/02/2027</option>
+				<option value="22/02/2027">dal 22/02/2027 al 28/02/2027</option>
+				<option value="01/03/2027">dal 01/03/2027 al 07/03/2027</option>
+				<option value="08/03/2027">dal 08/03/2027 al 14/03/2027</option>
+				<option value="15/03/2027">dal 15/03/2027 al 21/03/2027</option>
+				<option value="22/03/2027">dal 22/03/2027 al 28/03/2027</option>
+				<option value="29/03/2027">dal 29/03/2027 al 04/04/2027</option>
+				<option value="05/04/2027">dal 05/04/2027 al 11/04/2027</option>
+				<option value="12/04/2027">dal 12/04/2027 al 18/04/2027</option>
+				<option value="19/04/2027">dal 19/04/2027 al 25/04/2027</option>
+				<option value="26/04/2027">dal 26/04/2027 al 02/05/2027</option>
+				<option value="03/05/2027">dal 03/05/2027 al 09/05/2027</option>
+				<option value="10/05/2027">dal 10/05/2027 al 16/05/2027</option>
+				<option value="17/05/2027">dal 17/05/2027 al 23/05/2027</option>
+				<option value="24/05/2027">dal 24/05/2027 al 30/05/2027</option>
+				<option value="31/05/2027">dal 31/05/2027 al 06/06/2027</option>
+				<option value="07/06/2027">dal 07/06/2027 al 13/06/2027</option>
+				<option value="14/06/2027">dal 14/06/2027 al 20/06/2027</option>
+				<option value="21/06/2027">dal 21/06/2027 al 27/06/2027</option>
+				<option value="28/06/2027">dal 28/06/2027 al 30/06/2027</option>
+			</select>
+		</label>
+		<label class="size-0_5">
+			Stato gara:<br />
+			<select name="StatoGara" class="input-select-0_5" tabindex="3">
+				<option value="">Tutti..</option>
+				<option value="1">Disputate</option>
+				<option value="0">Da disputare</option>
+			</select>
+		</label>
+		<label id="lbCampionato" class="size-3">
+			Campionato:<br />
+			<select name="CId" class="input-select-3" tabindex="4" onchange="Campionato(2408, this.options[this.selectedIndex].value)">
+					<option value="">Tutti i campionati..</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale C F">
+					<option value="92843" selected="selected">Camp. Regionale C F Girone Unico</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale C M">
+					<option value="92844">Camp. Regionale C M Girone Unico</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale D F">
+					<option value="92845">Camp. Regionale D F Girone Unico</option>
+				</optgroup>
+				<optgroup label="Camp.Regionale D M">
+					<option value="92846">Camp. Regionale D M Girone Unico</option>
+				</optgroup>
+				<optgroup label="Coppa Regionale Femminile">
+					<option value="92837">Coppa Regionale Femminile Girone A</option>
+					<option value="92838">Coppa Regionale Femminile Girone B</option>
+					<option value="92839">Coppa Regionale Femminile Girone C</option>
+					<option value="92862">Coppa Regionale Femminile Girone D</option>
+					<option value="92848">Coppa Regionale Femminile Semifinali</option>
+					<option value="92849">Coppa Regionale Femminile Finale</option>
+				</optgroup>
+				<optgroup label="Coppa Regionale Maschile">
+					<option value="92840">Coppa Regionale Maschile Girone A</option>
+					<option value="92841">Coppa Regionale Maschile Girone B</option>
+					<option value="92842">Coppa Regionale Maschile Girone C</option>
+					<option value="92850">Coppa Regionale Maschile Semifinali</option>
+					<option value="92852">Coppa Regionale Maschile Finale</option>
+				</optgroup>
+				<optgroup label="SUPERCOPPA B2 FVG">
+					<option value="92836">SUPERCOPPA B2 FVG FINALE</option>
+					<option value="92835">SUPERCOPPA B2 FVG TRIANGOLARE</option>
+			</select>
+		</label>
+		<label id="lbSocieta" class="size-2">
+			Società:<br />
+			<select name="SId" class="input-select-2" tabindex="5">
+					<option value="">Tutte le societ&agrave;..</option>
+					<option value="3792">A.S.D. OLYMPIA TRIESTE MUGGIA</option>
+					<option value="2452" selected="selected">A.S.D. PALLAVOLO STARANZANO</option>
+					<option value="2475">APD ROVEREDANA VIS ET VIRTUS</option>
+					<option value="2484">ASD - C.S.D. SOKOL</option>
+					<option value="2460">ASD UNIONE SPORTIVA CORDENONS</option>
+					<option value="2569">ASS.SPORT.DILETT.VIVIL</option>
+					<option value="2524">C.S.R. CHEI DE VILE Vilalte ASD</option>
+					<option value="2556">CENTRO SPORT.ITALIANO TARCENTO</option>
+					<option value="2476">GIS VOLLEY SACILE A.S.D.</option>
+					<option value="2552">PAV NATISONIA A.S.D.</option>
+					<option value="2532">POL.LIBERTAS MARTIGNACCO S.S.D. a R.L.</option>
+					<option value="5295">S.C.S.D. ROJALKENNEDY</option>
+					<option value="2550">S.D. PALLAVOLO SANGIORGINA</option>
+					<option value="2548">STELLA VOLLEY A.S.D.</option>
+			</select>
+		</label>
+		<label class="size-0_5">
+			&nbsp;<br />
+			<input type="hidden" name="PId" value="7274" />
+			<input type="submit" name="btFiltro" value="CERCA" class="button bt-search" style="width:100px;" />
+		</label>
+		<label class="size-0_5">
+			&nbsp;<br />
+			<input type="button" name="btXls" onclick="EsportaXls(this.form);" value="Esporta" class="button bt-excel" style="width:100px;" />
+		</label>
+	</form>
+<table class="tbl tbl-risultati">
+	<caption>Camp. Regionale C F Girone Unico<a style="margin-left:10px;" target="_blank" title="Aggiungi calendario gare a Google Calendar" href="https://www.portalefipav.net/CalendarioGare.asp?c=754075686C7A6C7A64687C4A703825213B2036" class="link_calendar"><img style="width:20px;" src="/img/icone/calendar.png" alt="calendario"></a></caption>
+	<thead>
+		<tr>
+			<th style="width:40px;">Gara</th>
+			<th style="width:20px;" title="Giornata">G</th>
+			<th style="width:90px;">Data / ora</th>
+			<th style="width:320px;">Squadra casa</th>
+			<th style="width:320px;">Squadra ospite</th>
+			<th style="width:50px;" title="Risultato">Risul.</th>
+			<th class="isMobile">Dettagli</th>
+			<th style="width:40px;">&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="text-align:center">71</td>
+			<td style="text-align:center">1</td>
+			<td style="text-align:center">17/10/26 20:30</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="S.C.S.D. ROJALKENNEDY"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/5295/Loghi/LogoS5295.png" alt="">ROJALKENNEDY EMPORIO ADV</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627609">3 - 1</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627609"><span class="parziali">25-9</span><span class="parziali">25-21</span><span class="parziali">17-25</span><span class="parziali">25-23</span></td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627609"><img src="/img/statogara/stato5.png" class="tips ris-img" alt="statogara" title="gara omologata" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palestra Comunale&lt;/b&gt;&lt;br /&gt; MARIANO DEL FRIULI GO&lt;br /&gt;Strada Da Beorchie 2&lt;/p&gt;&lt;p class=&quot;designazione&quot;&gt;&lt;b&gt;Designazioni&lt;/b&gt;&lt;br&gt;1&#176; arbitro: FERFOGLIA SPELA&lt;br&gt;2&#176; arbitro: VACCA ELISABETH&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">75</td>
+			<td style="text-align:center">2</td>
+			<td style="text-align:center">20/10/26 20:30</td>
+			<td title="PAV NATISONIA A.S.D."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2552/Loghi/LogoS2552.jpg" alt="">PAV NATISONIA</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627613">0 - 3</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627613"><span class="parziali">20-25</span><span class="parziali">22-25</span><span class="parziali">18-25</span></td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627613"><img src="/img/statogara/statodesignata.png" class="tips ris-img" alt="statogara" title="da disputare&lt;br /&gt;Arbitro designato&lt;br&gt;1&#176; arbitro: CASTELLANI DARIO&lt;br&gt;2&#176; arbitro: GUION DEBORAH" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palazzetto dello Sport&lt;/b&gt;&lt;br /&gt; SAN GIOVANNI AL NATISONE UD&lt;br /&gt;Via Antica 14&lt;/p&gt;&lt;p class=&quot;designazione&quot;&gt;&lt;b&gt;Designazioni&lt;/b&gt;&lt;br&gt;1&#176; arbitro: CASTELLANI DARIO&lt;br&gt;2&#176; arbitro: GUION DEBORAH&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">81</td>
+			<td style="text-align:center">3</td>
+			<td style="text-align:center">31/10/2098 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="CENTRO SPORT.ITALIANO TARCENTO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2556/Loghi/LogoS2556.jpg" alt="">CSI TARCENTO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627619">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627619">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627619"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">89</td>
+			<td style="text-align:center">4</td>
+			<td style="text-align:center">07/11/2098 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="ASD - C.S.D. SOKOL"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2484/Loghi/LogoS2484.jpg" alt="">ZALET ZKB</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627627">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627627">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627627"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">95</td>
+			<td style="text-align:center">5</td>
+			<td style="text-align:center">14/11/2098 20:30</td>
+			<td title="S.D. PALLAVOLO SANGIORGINA"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/theme/newb/no-image.png" alt="">PROJECTVOLLEY SANGIORGINA</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627633">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627633">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627633"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palazzetto dello Sport&lt;/b&gt;&lt;br /&gt; SAN GIORGIO DI NOGARO UD&lt;br /&gt;Via Palladio&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">106</td>
+			<td style="text-align:center">6</td>
+			<td style="text-align:center">21/11/2098 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="ASS.SPORT.DILETT.VIVIL"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2569/Loghi/LogoS2569.png" alt="">VILLADIES FARMADERBE</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627644">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627644">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627644"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">112</td>
+			<td style="text-align:center">7</td>
+			<td style="text-align:center">28/11/2098 20:00</td>
+			<td title="POL.LIBERTAS MARTIGNACCO S.S.D. a R.L."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2532/Loghi/LogoS2532.png" alt="">ITAS CECCARELLI GROUP</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627650">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627650">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627650"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palazzetto dello Sport Azzurri d&#39;Italia&lt;/b&gt;&lt;br /&gt; MARTIGNACCO UD&lt;br /&gt;Via San Biagio&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">119</td>
+			<td style="text-align:center">8</td>
+			<td style="text-align:center">05/12/2098 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="STELLA VOLLEY A.S.D."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/theme/newb/no-image.png" alt="">A.S.D. STELLA VOLLEY</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627657">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627657">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627657"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">123</td>
+			<td style="text-align:center">9</td>
+			<td style="text-align:center">12/12/2098 20:30</td>
+			<td title="C.S.R. CHEI DE VILE Vilalte ASD"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2524/Loghi/LogoS2524.jpg" alt="">CHIARVESIO CHEI DE VILE</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627661">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627661">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627661"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palestra Comunale&lt;/b&gt;&lt;br /&gt;Ciconicco FAGAGNA UD&lt;br /&gt;via del Cristo&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">133</td>
+			<td style="text-align:center">10</td>
+			<td style="text-align:center">19/12/2098 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="APD ROVEREDANA VIS ET VIRTUS"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2475/Loghi/LogoS2475.png" alt="">UNION VOLLEY ACADEMY PN</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627671">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627671">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627671"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">140</td>
+			<td style="text-align:center">11</td>
+			<td style="text-align:center">09/01/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="GIS VOLLEY SACILE A.S.D."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2476/Loghi/LogoS2476.jpg" alt="">SERVIZI INDUSTRIALI GIS</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627678">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627678">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627678"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">146</td>
+			<td style="text-align:center">12</td>
+			<td style="text-align:center">17/01/2099 17:00</td>
+			<td title="A.S.D. OLYMPIA TRIESTE MUGGIA"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/3792/Loghi/LogoS3792.png" alt="">OLYMPIA TRIESTE</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627684">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627684">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627684"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;PALASPORT AQUILINIA&lt;/b&gt;&lt;br /&gt; MUGGIA TS&lt;br /&gt;PIAZZALE MENGUZZATO &lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">155</td>
+			<td style="text-align:center">13</td>
+			<td style="text-align:center">23/01/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="ASD UNIONE SPORTIVA CORDENONS"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2460/Loghi/LogoS2460.jpg" alt="">DB CARR. DE BORTOLI </td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627693">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627693">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627693"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">162</td>
+			<td style="text-align:center">14</td>
+			<td style="text-align:center">30/01/2099 20:30</td>
+			<td title="S.C.S.D. ROJALKENNEDY"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/5295/Loghi/LogoS5295.png" alt="">ROJALKENNEDY EMPORIO ADV</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627700">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627700">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627700"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palestra Comunale&lt;/b&gt;&lt;br /&gt;Cavalicco TAVAGNACCO UD&lt;br /&gt;Via San Bernardo&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">166</td>
+			<td style="text-align:center">15</td>
+			<td style="text-align:center">06/02/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="PAV NATISONIA A.S.D."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2552/Loghi/LogoS2552.jpg" alt="">PAV NATISONIA</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627704">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627704">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627704"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">172</td>
+			<td style="text-align:center">16</td>
+			<td style="text-align:center">13/02/2099 20:30</td>
+			<td title="CENTRO SPORT.ITALIANO TARCENTO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2556/Loghi/LogoS2556.jpg" alt="">CSI TARCENTO</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627710">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627710">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627710"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; TARCENTO UD&lt;br /&gt;Via Sottocolle Verzan&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">180</td>
+			<td style="text-align:center">17</td>
+			<td style="text-align:center">20/02/2099 18:30</td>
+			<td title="ASD - C.S.D. SOKOL"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2484/Loghi/LogoS2484.jpg" alt="">ZALET ZKB</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627718">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627718">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627718"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Centro Polisportivo Ervatti&lt;/b&gt;&lt;br /&gt; SGONICO TS&lt;br /&gt;Localit&#224; Borgo Grotta Gigante, 67&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">186</td>
+			<td style="text-align:center">18</td>
+			<td style="text-align:center">27/02/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="S.D. PALLAVOLO SANGIORGINA"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/theme/newb/no-image.png" alt="">PROJECTVOLLEY SANGIORGINA</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627724">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627724">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627724"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">197</td>
+			<td style="text-align:center">19</td>
+			<td style="text-align:center">06/03/2099 20:30</td>
+			<td title="ASS.SPORT.DILETT.VIVIL"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2569/Loghi/LogoS2569.png" alt="">VILLADIES FARMADERBE</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627735">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627735">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627735"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palestra Comunale&lt;/b&gt;&lt;br /&gt; VILLA VICENTINA UD&lt;br /&gt;Via Duca d&#39;Aosta&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">203</td>
+			<td style="text-align:center">20</td>
+			<td style="text-align:center">13/03/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="POL.LIBERTAS MARTIGNACCO S.S.D. a R.L."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2532/Loghi/LogoS2532.png" alt="">ITAS CECCARELLI GROUP</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627741">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627741">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627741"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">210</td>
+			<td style="text-align:center">21</td>
+			<td style="text-align:center">20/03/2099 20:30</td>
+			<td title="STELLA VOLLEY A.S.D."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/theme/newb/no-image.png" alt="">A.S.D. STELLA VOLLEY</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627748">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627748">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627748"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palestra Comunale di Rivignano&lt;/b&gt;&lt;br /&gt; RIVIGNANO UD&lt;br /&gt;via Ungaretti 35&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">214</td>
+			<td style="text-align:center">22</td>
+			<td style="text-align:center">03/04/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="C.S.R. CHEI DE VILE Vilalte ASD"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2524/Loghi/LogoS2524.jpg" alt="">CHIARVESIO CHEI DE VILE</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627752">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627752">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627752"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">224</td>
+			<td style="text-align:center">23</td>
+			<td style="text-align:center">10/04/2099 20:30</td>
+			<td title="APD ROVEREDANA VIS ET VIRTUS"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2475/Loghi/LogoS2475.png" alt="">UNION VOLLEY ACADEMY PN</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627762">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627762">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627762"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Valery Space&lt;/b&gt;&lt;br /&gt; PORDENONE PN&lt;br /&gt;Via Prasecco 19&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">231</td>
+			<td style="text-align:center">24</td>
+			<td style="text-align:center">17/04/2099 20:30</td>
+			<td title="GIS VOLLEY SACILE A.S.D."><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2476/Loghi/LogoS2476.jpg" alt="">SERVIZI INDUSTRIALI GIS</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627769">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627769">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627769"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Pal. Sport &quot;Piccin&quot;&lt;/b&gt;&lt;br /&gt; SACILE PN&lt;br /&gt;Via Piccin 2&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:center">237</td>
+			<td style="text-align:center">25</td>
+			<td style="text-align:center">24/04/2099 20:00</td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td title="A.S.D. OLYMPIA TRIESTE MUGGIA"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/3792/Loghi/LogoS3792.png" alt="">OLYMPIA TRIESTE</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627775">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627775">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627775"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; STARANZANO GO&lt;br /&gt;Via Montes, 8&lt;/p&gt;" />
+			</td>
+		</tr>
+		<tr class="dispari">
+			<td style="text-align:center">246</td>
+			<td style="text-align:center">26</td>
+			<td style="text-align:center">01/05/2099 20:30</td>
+			<td title="ASD UNIONE SPORTIVA CORDENONS"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2460/Loghi/LogoS2460.jpg" alt="">DB CARR. DE BORTOLI </td>
+			<td title="A.S.D. PALLAVOLO STARANZANO"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+			<td style="text-align:center" class="risultato" id="Risultato_131627784">-</td>
+			<td class="risultato-dettagli isMobile" id="Parziali_131627784">&nbsp;</td>
+			<td style="text-align:center">
+				<span id="StatoGara_131627784"><img src="/img/statogara/stato0.png" class="tips ris-img" alt="statogara" title="da disputare" /></span>
+				<img src="/img/info_16.png" class="tips ris-img" alt="info" title="
+&lt;p&gt;&lt;b&gt;Palasport&lt;/b&gt;&lt;br /&gt; CORDENONS PN&lt;br /&gt;Via Avellaneda 7&lt;/p&gt;" />
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="tbl tbl-classifica">
+	<caption>
+		<div style="overflow:auto; margin: 0 0 5px"><select name="GaraGiornata" class="classifica-select-giornata" onchange="document.location.href='/risultati-classifiche.aspx?ComitatoId=28&amp;StId=2408&amp;DataDa=&amp;StatoGara=&amp;CId=92843&amp;SId=2452&amp;PId=7274&amp;btFiltro=CERCA&GG=' + this.options[this.selectedIndex].value;">
+		<option value="">Classifica all'ultima giornata..</option>
+<option value="1">Classifica alla giornata n&deg; 1</option>
+<option value="2">Classifica alla giornata n&deg; 2</option>
+<option value="3">Classifica alla giornata n&deg; 3</option>
+<option value="4">Classifica alla giornata n&deg; 4</option>
+<option value="5">Classifica alla giornata n&deg; 5</option>
+<option value="6">Classifica alla giornata n&deg; 6</option>
+<option value="7">Classifica alla giornata n&deg; 7</option>
+<option value="8">Classifica alla giornata n&deg; 8</option>
+<option value="9">Classifica alla giornata n&deg; 9</option>
+<option value="10">Classifica alla giornata n&deg; 10</option>
+<option value="11">Classifica alla giornata n&deg; 11</option>
+<option value="12">Classifica alla giornata n&deg; 12</option>
+<option value="13">Classifica alla giornata n&deg; 13</option>
+<option value="14">Classifica alla giornata n&deg; 14</option>
+<option value="15">Classifica alla giornata n&deg; 15</option>
+<option value="16">Classifica alla giornata n&deg; 16</option>
+<option value="17">Classifica alla giornata n&deg; 17</option>
+<option value="18">Classifica alla giornata n&deg; 18</option>
+<option value="19">Classifica alla giornata n&deg; 19</option>
+<option value="20">Classifica alla giornata n&deg; 20</option>
+<option value="21">Classifica alla giornata n&deg; 21</option>
+<option value="22">Classifica alla giornata n&deg; 22</option>
+<option value="23">Classifica alla giornata n&deg; 23</option>
+<option value="24">Classifica alla giornata n&deg; 24</option>
+<option value="25">Classifica alla giornata n&deg; 25</option>
+<option value="26">Classifica alla giornata n&deg; 26</option>
+</select></div>
+	</caption>
+		<thead>
+			<tr>
+<th style="width: 50px;" title="Posizione">Pos.</th>
+<th style="width: text-align:left;">Squadra</th>
+<th style="width: 70px;">Punti</th>
+<th style="width: 40px;" title="Partite Giocate">PG</th>
+<th style="width: 40px;" title="Partite Vinte">PV</th>
+<th style="width: 40px;" title="Partite Perse">PP</th>
+<th style="width: 40px;" title="Set Fatti">SF</th>
+<th style="width: 40px;" title="Set Subiti">SS</th>
+<th style="width: 40px;" title="Quoziente Set">QS</th>
+<th style="width: 40px;" title="Punti Fatti">PF</th>
+<th style="width: 40px;" title="Punti Subiti">PS</th>
+<th style="width: 40px;" title="Quoziente Punti">QP</th>
+<th style="width: 50px;" title="Penalit&agrave;">Penal.</th>
+</tr>
+</thead>
+			<tr>
+<td style="text-align:center">1</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2556/Loghi/LogoS2556.jpg" alt="">CSI TARCENTO</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">---</td>
+<td style="text-align:center;font-weight: bold;">75</td>
+<td style="text-align:center;font-weight: bold;">58</td>
+<td style="text-align:center;font-weight: bold;">1,29</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">2</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2569/Loghi/LogoS2569.png" alt="">VILLADIES FARMADERBE</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">---</td>
+<td style="text-align:center;font-weight: bold;">80</td>
+<td style="text-align:center;font-weight: bold;">62</td>
+<td style="text-align:center;font-weight: bold;">1,29</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">3</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2524/Loghi/LogoS2524.jpg" alt="">CHIARVESIO CHEI DE VILE</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">---</td>
+<td style="text-align:center;font-weight: bold;">76</td>
+<td style="text-align:center;font-weight: bold;">61</td>
+<td style="text-align:center;font-weight: bold;">1,25</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">4</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/theme/newb/no-image.png" alt="">A.S.D. STELLA VOLLEY</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">---</td>
+<td style="text-align:center;font-weight: bold;">77</td>
+<td style="text-align:center;font-weight: bold;">68</td>
+<td style="text-align:center;font-weight: bold;">1,13</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">5</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2452/Loghi/LogoS2452.jpg" alt="">TIKITAKA STARANZANO</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">3,00</td>
+<td style="text-align:center;font-weight: bold;">92</td>
+<td style="text-align:center;font-weight: bold;">83</td>
+<td style="text-align:center;font-weight: bold;">1,11</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">6</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2476/Loghi/LogoS2476.jpg" alt="">SERVIZI INDUSTRIALI GIS</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">3,00</td>
+<td style="text-align:center;font-weight: bold;">98</td>
+<td style="text-align:center;font-weight: bold;">92</td>
+<td style="text-align:center;font-weight: bold;">1,07</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">7</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/theme/newb/no-image.png" alt="">PROJECTVOLLEY SANGIORGINA</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">1,50</td>
+<td style="text-align:center;font-weight: bold;">102</td>
+<td style="text-align:center;font-weight: bold;">95</td>
+<td style="text-align:center;font-weight: bold;">1,07</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">8</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2475/Loghi/LogoS2475.png" alt="">UNION VOLLEY ACADEMY PN</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">4</td>
+<td style="text-align:center;font-weight: bold;">5</td>
+<td style="text-align:center;font-weight: bold;">0,80</td>
+<td style="text-align:center;font-weight: bold;">191</td>
+<td style="text-align:center;font-weight: bold;">193</td>
+<td style="text-align:center;font-weight: bold;">0,99</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">9</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/3792/Loghi/LogoS3792.png" alt="">OLYMPIA TRIESTE</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0,67</td>
+<td style="text-align:center;font-weight: bold;">95</td>
+<td style="text-align:center;font-weight: bold;">102</td>
+<td style="text-align:center;font-weight: bold;">0,93</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">10</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2532/Loghi/LogoS2532.png" alt="">ITAS CECCARELLI GROUP</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">2</td>
+<td style="text-align:center;font-weight: bold;">6</td>
+<td style="text-align:center;font-weight: bold;">0,33</td>
+<td style="text-align:center;font-weight: bold;">163</td>
+<td style="text-align:center;font-weight: bold;">176</td>
+<td style="text-align:center;font-weight: bold;">0,93</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">11</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/5295/Loghi/LogoS5295.png" alt="">ROJALKENNEDY EMPORIO ADV</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0,33</td>
+<td style="text-align:center;font-weight: bold;">83</td>
+<td style="text-align:center;font-weight: bold;">92</td>
+<td style="text-align:center;font-weight: bold;">0,90</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">12</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2460/Loghi/LogoS2460.jpg" alt="">DB CARR. DE BORTOLI </td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0,00</td>
+<td style="text-align:center;font-weight: bold;">61</td>
+<td style="text-align:center;font-weight: bold;">76</td>
+<td style="text-align:center;font-weight: bold;">0,80</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">13</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2484/Loghi/LogoS2484.jpg" alt="">ZALET ZKB</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0,00</td>
+<td style="text-align:center;font-weight: bold;">62</td>
+<td style="text-align:center;font-weight: bold;">80</td>
+<td style="text-align:center;font-weight: bold;">0,78</td>
+<td style="text-align:center">0</td>
+</tr>
+			<tr>
+<td style="text-align:center">14</td>
+<td style="padding: 2px 4px;"><img style="object-fit: contain;width: 40px;height: 40px;border: 1px solid #b7b7b7;padding: 3px;margin: 4px;" src="/mngArea/Societa/img/2552/Loghi/LogoS2552.jpg" alt="">PAV NATISONIA</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">1</td>
+<td style="text-align:center;font-weight: bold;">0</td>
+<td style="text-align:center;font-weight: bold;">3</td>
+<td style="text-align:center;font-weight: bold;">0,00</td>
+<td style="text-align:center;font-weight: bold;">58</td>
+<td style="text-align:center;font-weight: bold;">75</td>
+<td style="text-align:center;font-weight: bold;">0,77</td>
+<td style="text-align:center">0</td>
+</tr>
+</table>
+<script type="text/javascript">
+	window.addEvent('domready', function () {
+		var tip = new Tips('.tips', { className: 'risultati-tips' });
+		$$('.link_classifica').each(function(el){ el.addEvent('click', function(){ Apri('','', this.href, 'cla');return false; }); });
+	});
+</script>
+	</div>
+	</div>
+		</div>
+	</div>
+	</div>
+	<div id="layout-area5" style="width:100%">
+		<div class="col col-4">
+		</div>
+	</div>
+</div>
+
+    <p class="pw-credito" style="text-align:center;margin:5px auto 15px;font-size:11px;">Sito realizzato con <a href="https://www.powersport.it" target="_blank">PowerSPORT</a> - gestionale per societ&agrave; sportive</p>
+
+<!--Pagina generata in 00:00:00.0312526 secondi-->
+</body>
+</html>
+

@@ -14,15 +14,17 @@
  */
 
 /*
+ * ── REGOLE CLASSIFICA ────────────────────────────────────────
+ * Quante squadre vengono promosse / retrocesse (colori in classifica).
+ * DA VERIFICARE sul regolamento FIPAV FVG della Serie C di questa stagione.
+ */
+$promoSlots = 1;
+$relegSlots = 2;
+
+/*
  * ── RECUPERO DATI DA fetch.php ───────────────────────────────
  * Costruisco l'URL base della pagina corrente (es. https://pallavolostaranzano.it/new/scraper_fipav)
  * per poter chiamare fetch.php con un URL assoluto.
- *
- * $_SERVER['HTTPS'] → dice se la pagina è servita in HTTPS
- * $_SERVER['HTTP_HOST'] → il dominio (es. pallavolostaranzano.it)
- * $_SERVER['SCRIPT_NAME'] → percorso dello script (es. /new/scraper_fipav/embed.php)
- * dirname() → prende solo la cartella, senza il nome del file
- * rtrim(..., '/') → rimuove eventuale slash finale
  */
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
          . '://' . $_SERVER['HTTP_HOST']
@@ -32,33 +34,26 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
  * file_get_contents() scarica l'URL come stringa (il JSON di fetch.php).
  * Il @ davanti sopprime eventuali warning se la chiamata fallisce.
  * json_decode(..., true) converte il JSON in un array PHP associativo.
- * Se $json è falso (fallita), $data rimane null.
  */
 $json = @file_get_contents($baseUrl . '/fetch.php');
 $data = $json ? json_decode($json, true) : null;
 
-/* Se la chiamata HTTP ha fallito, provo a includere fetch.php direttamente */
+/* Se la chiamata fallisce, mostro errore e termino */
 if (!$data || !empty($data['error'])) {
-    $json = @file_get_contents(__DIR__ . '/fetch.php');
-    $data = $json ? json_decode($json, true) : null;
-}
-
-/* Se anche il fallback fallisce, mostro errore e termino */
-if (!$data || !empty($data['error'])) {
-    echo '<p style="color:red;font-family:sans-serif;padding:16px">Errore nel recupero dei dati.</p>';
+    echo '<p style="color:#c94f4f;font-family:sans-serif;padding:16px">Dati del campionato momentaneamente non disponibili.</p>';
     exit;
 }
 
 /*
  * Estraggo le sezioni dal JSON in variabili PHP separate.
  * ?? è l'operatore "null coalescing": se la chiave non esiste, usa il valore a destra.
- * Es: $data['next_match'] ?? null → se 'next_match' non c'è, usa null
  */
 $nextMatch     = $data['next_match']      ?? null; /* prossima partita */
 $futureMatches = $data['future_matches']  ?? [];   /* lista partite future */
 $standings     = $data['standings']       ?? [];   /* classifica */
-$playedMatches = $data['played_matches']  ?? [];   /* partite giocate */
+$playedMatches = $data['played_matches']  ?? [];   /* partite giocate (più recente prima) */
 $tikiTakaStats = $data['tiki_taka_stats'] ?? null; /* stats Tiki Taka dalla classifica */
+$meta          = $data['meta']            ?? [];   /* stagione, campionato, data aggiornamento */
 
 /*
  * ── FUNZIONI DI SUPPORTO ─────────────────────────────────────
@@ -67,44 +62,40 @@ $tikiTakaStats = $data['tiki_taka_stats'] ?? null; /* stats Tiki Taka dalla clas
 /*
  * Funzione: e()  (abbreviazione di "escape")
  * Converte caratteri speciali HTML in entità sicure.
- * SERVE SEMPRE quando stampiamo dati provenienti dall'esterno,
- * per evitare attacchi XSS (iniezione di codice HTML/JavaScript malevolo).
- *
- * Esempio: e('<script>alert("hack")</script>')
- *       → '&lt;script&gt;alert(&quot;hack&quot;)&lt;/script&gt;'
- * Il browser mostrerà il testo, non eseguirà lo script.
- *
- * Il ? prima di string significa che accetta anche null.
+ * SERVE SEMPRE quando stampiamo dati provenienti dall'esterno (anti XSS).
  */
 function e(?string $v): string
 {
     return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 }
 
-/*
- * Funzione: isTikiTakaTeam()
- * Restituisce true se il nome squadra si riferisce a Tiki Taka Staranzano.
- * stripos() cerca una sottostringa ignorando maiuscole/minuscole.
- * !== false: stripos restituisce false se NON trova nulla, un numero se trova.
- */
+/* true se il nome squadra è Tiki Taka Staranzano (FIPAV la scrive anche "TIKITAKA") */
 function isTikiTakaTeam(string $name): bool
 {
     return stripos($name, 'staranzano') !== false
-        || stripos($name, 'tiki taka')  !== false;
+        || stripos($name, 'tiki taka')  !== false
+        || stripos($name, 'tikitaka')   !== false;
+}
+
+/*
+ * Funzione: campLabel()
+ * Trasforma il nome FIPAV in un'etichetta leggibile:
+ * "Camp. Regionale C F Girone Unico" → "Serie C Femminile · Girone Unico"
+ * Se il formato non è riconosciuto, restituisce il nome così com'è.
+ */
+function campLabel(string $c): string
+{
+    if (preg_match('/Regionale\s+([A-D])\s+([FM])\b\s*(.*)$/i', $c, $m)) {
+        $label = 'Serie ' . strtoupper($m[1]) . (strtoupper($m[2]) === 'F' ? ' Femminile' : ' Maschile');
+        return $m[3] !== '' ? $label . ' · ' . $m[3] : $label;
+    }
+    return $c;
 }
 
 /*
  * Funzione: initials()
  * Ricava 2 lettere iniziali da un nome squadra per le icone circolari.
  * Esempio: "ASD Pallavolo Mossa" → "PM"
- *
- * 1. preg_replace() rimuove prefissi comuni (ASD, APD, ecc.)
- * 2. explode(' ', ...) divide la stringa in parole
- * 3. array_filter() tiene solo parole con più di 1 carattere
- * 4. array_values() reindicizza l'array da 0
- * 5. array_slice(..., 0, 2) prende le prime 2 parole
- * 6. Per ogni parola prende la prima lettera ($w[0]) in maiuscolo
- * 7. Se non trova nulla, prende le prime 2 lettere del nome originale
  */
 function initials(string $name): string
 {
@@ -119,13 +110,8 @@ function initials(string $name): string
 
 /*
  * Funzione: parseSetDetails()
- * Estrae i punteggi dei singoli set da una stringa come "25-14 25-22 25-15".
+ * Estrae i punteggi dei singoli set da "25-14 25-22 25-15".
  * Restituisce un array di coppie: [[25,14], [25,22], [25,15]]
- *
- * preg_match_all() cerca tutte le occorrenze del pattern nel testo.
- * Il pattern /(\d{1,2})-(\d{1,2})/ cerca "una o due cifre, trattino, una o due cifre".
- * PREG_SET_ORDER organizza i risultati per ogni match trovato.
- * (int) converte la stringa in numero intero.
  */
 function parseSetDetails(string $dettagli): array
 {
@@ -137,51 +123,322 @@ function parseSetDetails(string $dettagli): array
     return $sets;
 }
 
+/* Nome breve del mese in italiano: format('n') dà il mese come numero 1–12 */
+function itMonth(DateTime $d): string
+{
+    $mesi = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+    return $mesi[(int) $d->format('n') - 1];
+}
+
 /*
  * Funzione: fmtDate()
- * Formatta una data ISO (es. "2026-03-21 20:00:00") in italiano (es. "Sab 21 Mar 2026").
- *
- * $d->format('D d M Y') produce una data in inglese: "Sat 21 Mar 2026"
- * str_replace() sostituisce i nomi inglesi con quelli italiani.
- * L'operatore spread (...) "appiattisce" l'array come lista di argomenti.
- *
- * Se la data è null o vuota, usa il $fallback passato come parametro.
+ * Formatta una data ISO ("2026-03-21 20:00:00") in italiano ("Sab 21 Mar 2026").
+ * format('w') dà il giorno della settimana come numero (0 = domenica).
  */
 function fmtDate(?string $iso, string $fallback = ''): string
 {
     if (!$iso) return e($fallback);
-    $d    = new DateTime($iso);
-    $days = ['Mon'=>'Lun','Tue'=>'Mar','Wed'=>'Mer','Thu'=>'Gio','Fri'=>'Ven','Sat'=>'Sab','Sun'=>'Dom'];
-    $mons = ['Jan'=>'Gen','Feb'=>'Feb','Mar'=>'Mar','Apr'=>'Apr','May'=>'Mag','Jun'=>'Giu',
-             'Jul'=>'Lug','Aug'=>'Ago','Sep'=>'Set','Oct'=>'Ott','Nov'=>'Nov','Dec'=>'Dic'];
-    $str  = $d->format('D d M Y');
-    return str_replace([...array_keys($days), ...array_keys($mons)],
-                       [...array_values($days), ...array_values($mons)], $str);
+    $d      = new DateTime($iso);
+    $giorni = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+    return $giorni[(int) $d->format('w')] . ' ' . $d->format('d') . ' ' . itMonth($d) . ' ' . $d->format('Y');
 }
 
 /*
- * ── CALCOLO FORMA RECENTE ────────────────────────────────────
- * Prendo le ultime 5 partite giocate e creo un array di true/false
- * (true = vinta, false = persa) per mostrare i pallini colorati.
- *
- * array_slice($playedMatches, 0, 5) → prende solo i primi 5 elementi
- * isset() → controlla che la chiave 'tiki_taka_won' esista
+ * Funzione: icon()
+ * Restituisce un'icona Lucide (https://lucide.dev, licenza ISC) come SVG inline.
+ * I tracciati sono copiati qui dentro: niente CDN né dipendenze esterne.
+ * stroke="currentColor" → l'icona prende il colore del testo intorno.
+ * aria-hidden → gli screen reader la ignorano (il testo accanto basta).
  */
+function icon(string $name, int $size = 14): string
+{
+    $paths = [
+        'house'         => '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+        'bus'           => '<path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/>',
+        'calendar'      => '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+        'calendar-plus' => '<path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"/><path d="M3 10h18"/><path d="M16 19h6"/><path d="M19 16v6"/>',
+        'clock'         => '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+        'trophy'        => '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+        'trending-up'   => '<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>',
+    ];
+    return '<svg class="vb-ico" width="' . $size . '" height="' . $size . '" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+         . ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $paths[$name] . '</svg>';
+}
+
+/*
+ * Funzione: calButton()
+ * Pulsante "Aggiungi al calendario" verso il link Google Calendar di FIPAV.
+ * Se il link è vuoto non stampa niente.
+ */
+function calButton(string $url): void
+{
+    if ($url === '') return;
+    ?>
+    <a class="vb-cal-btn" data-cy="add-calendar" href="<?= e($url) ?>" target="_blank" rel="noopener">
+        <?= icon('calendar-plus') ?>Aggiungi al calendario
+    </a>
+    <?php
+}
+
+/*
+ * Funzione: matchPoints()
+ * Punti in classifica di una partita (regola pallavolo):
+ * vittoria 3-0 / 3-1 = 3, vittoria 3-2 = 2, sconfitta 2-3 = 1, sconfitta 0-3 / 1-3 = 0.
+ */
+function matchPoints(int $won, int $lost): int
+{
+    if ($won === 3) return $lost === 2 ? 2 : 3;
+    return ($won === 2 && $lost === 3) ? 1 : 0;
+}
+
+/*
+ * Funzione: pointsTrend()
+ * Punti cumulati di Tiki Taka partita dopo partita, in ordine cronologico.
+ * $played arriva dalla più recente, quindi la rovescio.
+ * Risultato: [['giornata' => '1', 'punti' => 3], ['giornata' => '2', 'punti' => 5], ...]
+ */
+function pointsTrend(array $played): array
+{
+    $trend = [];
+    $tot   = 0;
+    foreach (array_reverse($played) as $m) {
+        if (!isset($m['tiki_taka_sets_won'], $m['tiki_taka_sets_lost'])) continue;
+        $tot    += matchPoints((int) $m['tiki_taka_sets_won'], (int) $m['tiki_taka_sets_lost']);
+        $trend[] = ['giornata' => (string) ($m['giornata'] ?? ''), 'punti' => $tot];
+    }
+    return $trend;
+}
+
+/*
+ * Funzione: pointsChart()
+ * Disegna il grafico a linea dei punti cumulati come SVG inline (niente librerie).
+ * Le coordinate sono in un "foglio" virtuale di 400×180 (viewBox): il CSS lo
+ * scala alla larghezza disponibile. I colori arrivano dal CSS (tema chiaro/scuro).
+ */
+function pointsChart(array $trend): string
+{
+    $w = 400; $h = 180;                               /* dimensioni del viewBox */
+    $left = 30; $right = 16; $top = 22; $bottom = 32; /* margini per le etichette */
+    $n   = count($trend);
+    $max = max(3, max(array_column($trend, 'punti')));
+
+    /* Da indice partita / punti a coordinate x / y nel viewBox */
+    $x = fn(int $i): float => round($left + $i * ($w - $left - $right) / max(1, $n - 1), 1);
+    $y = fn(int $p): float => round($top + ($h - $top - $bottom) * (1 - $p / $max), 1);
+
+    $label = 'Andamento punti: ' . implode(', ', array_map(fn($t) => 'giornata ' . $t['giornata'] . ' ' . $t['punti'] . ' punti', $trend));
+    $svg   = '<svg viewBox="0 0 ' . $w . ' ' . $h . '" role="img" aria-label="' . e($label) . '">';
+
+    /* Linee orizzontali di riferimento (0, metà, massimo) con il valore a sinistra */
+    foreach (array_unique([0, intdiv($max, 2), $max]) as $p) {
+        $svg .= '<line class="vb-chart-grid" x1="' . $left . '" x2="' . ($w - $right) . '" y1="' . $y($p) . '" y2="' . $y($p) . '"/>'
+              . '<text class="vb-chart-axis" x="' . ($left - 8) . '" y="' . ($y($p) + 4) . '" text-anchor="end">' . $p . '</text>';
+    }
+
+    /* Area sfumata sotto la linea + linea dei punti */
+    $pts = [];
+    foreach ($trend as $i => $t) {
+        $pts[] = $x($i) . ',' . $y($t['punti']);
+    }
+    $base = $y(0);
+    $svg .= '<polygon class="vb-chart-area" points="' . $x(0) . ',' . $base . ' ' . implode(' ', $pts) . ' ' . $x($n - 1) . ',' . $base . '"/>'
+          . '<polyline class="vb-chart-line" points="' . implode(' ', $pts) . '"/>';
+
+    /* Pallini, punti sopra (tutti se le partite sono poche, altrimenti solo l'ultimo) e giornata sotto */
+    foreach ($trend as $i => $t) {
+        $svg .= '<circle class="vb-chart-dot" cx="' . $x($i) . '" cy="' . $y($t['punti']) . '" r="3.5"/>';
+        if ($n <= 12 || $i === $n - 1) {
+            $svg .= '<text class="vb-chart-val" x="' . $x($i) . '" y="' . ($y($t['punti']) - 9) . '" text-anchor="middle">' . $t['punti'] . '</text>';
+        }
+        $svg .= '<text class="vb-chart-axis" x="' . $x($i) . '" y="' . ($h - $bottom + 18) . '" text-anchor="middle">' . ($n <= 12 ? 'G' : '') . e($t['giornata']) . '</text>';
+    }
+    return $svg . '</svg>';
+}
+
+/* true se la partita ha un risultato tipo "3 - 1" */
+function isPlayed(array $m): bool
+{
+    return (bool) preg_match('/^\d+\s*-\s*\d+$/', trim($m['risultato'] ?? ''));
+}
+
+/*
+ * Funzione: teamBlock()
+ * Stampa una squadra della scheda partita (icona, nome, casa/trasferta).
+ * Per Tiki Taka uso il logo vero al posto delle iniziali.
+ */
+function teamBlock(string $name, bool $isTT, bool $away, ?bool $ttWon): void
+{
+    $nameCls = $isTT && $ttWon === true ? 'winner' : ($isTT && $ttWon === false ? 'loser' : '');
+    ?>
+    <div class="vb-team <?= $away ? 'away' : '' ?>">
+        <div class="vb-team-icon <?= $isTT ? 'home-icon' : '' ?>">
+            <?php if ($isTT): ?>
+                <img src="assets/tiki_taka_logo.jpg" alt="">
+            <?php else: ?>
+                <?= e(initials($name)) ?>
+            <?php endif; ?>
+        </div>
+        <div class="vb-team-name <?= $nameCls ?>"><?= e($name) ?></div>
+        <?php if ($isTT): ?>
+            <span class="vb-pill <?= $away ? 'away' : 'home' ?>"><?= icon($away ? 'bus' : 'house', 10) ?><?= $away ? 'Trasferta' : 'Casa' ?></span>
+        <?php endif; ?>
+    </div>
+    <?php
+}
+
+/*
+ * Funzione: matchCard()
+ * Stampa la scheda grande di una partita (usata per "Ultima" e "Prossima").
+ * $played = true → mostra risultato e set; false → mostra VS e orario.
+ */
+function matchCard(array $m, bool $played): void
+{
+    $ttHome = isTikiTakaTeam($m['squadra_casa'] ?? '');
+    $ttWon  = $played ? ($m['tiki_taka_won'] ?? null) : null;
+    $sets   = $played ? parseSetDetails($m['dettagli'] ?? '') : [];
+    $dt     = !empty($m['data_iso']) ? new DateTime($m['data_iso']) : null;
+    ?>
+    <article class="vb-match <?= $ttWon === true ? 'is-win' : ($ttWon === false ? 'is-loss' : '') ?>">
+        <div class="vb-match-head">
+            <div class="vb-match-meta">
+                <span><?= icon('calendar', 12) ?> <?= fmtDate($m['data_iso'] ?? null, $m['data_ora'] ?? '') ?></span>
+                <span aria-hidden="true">·</span>
+                <span>Giornata <?= e($m['giornata'] ?? '') ?></span>
+            </div>
+            <?php if (!$played): ?>
+                <span class="vb-badge upcoming">In programma</span>
+            <?php elseif ($ttWon !== null): ?>
+                <span class="vb-badge <?= $ttWon ? 'win' : 'loss' ?>"><?= $ttWon ? icon('trophy', 10) . 'Vittoria' : 'Sconfitta' ?></span>
+            <?php else: ?>
+                <span class="vb-badge played">Finita</span>
+            <?php endif; ?>
+        </div>
+        <div class="vb-match-body">
+            <?php teamBlock($m['squadra_casa'] ?? '', $ttHome, false, $ttWon); ?>
+            <div class="vb-score">
+                <?php if ($played): ?>
+                    <div class="vb-score-main"><?= e(str_replace(' ', '', $m['risultato'])) ?></div>
+                    <div class="vb-score-label">SET</div>
+                <?php else: ?>
+                    <div class="vb-score-vs">VS</div>
+                    <?php if ($dt): ?><div class="vb-score-time"><?= icon('clock', 12) ?> <?= $dt->format('H:i') ?></div><?php endif; ?>
+                <?php endif; ?>
+            </div>
+            <?php teamBlock($m['squadra_ospite'] ?? '', !$ttHome, true, $ttWon); ?>
+        </div>
+        <?php if (!empty($sets)): ?>
+        <div class="vb-sets">
+            <?php foreach ($sets as $i => $set): ?>
+            <?php $ttWonSet = $ttHome ? ($set[0] > $set[1]) : ($set[1] > $set[0]); ?>
+            <div class="vb-set-chip <?= $ttWonSet ? 'win' : 'loss' ?>">
+                <div class="vb-set-lbl"><?= $i + 1 ?>° set</div>
+                <div class="vb-set-score"><?= $set[0] ?>–<?= $set[1] ?></div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        <div class="vb-match-foot">
+            <span>Gara n° <?= e($m['gara'] ?? '') ?></span>
+            <?php if (!$played && $dt): ?>
+            <?php /* Countdown: il testo lo scrive il JavaScript in fondo alla pagina leggendo data-start (ora di Roma) */ ?>
+            <span class="vb-countdown" data-cy="countdown" data-start="<?= (new DateTime($m['data_iso'], new DateTimeZone('Europe/Rome')))->format('c') ?>">
+                <?= icon('clock', 12) ?><span class="vb-countdown-txt"></span>
+            </span>
+            <?php endif; ?>
+        </div>
+    </article>
+    <?php
+}
+
+/*
+ * Funzione: matchList()
+ * Stampa un elenco compatto di partite (calendario e risultati).
+ * Ogni riga: data | avversaria + casa/trasferta | risultato o orario.
+ */
+function matchList(array $matches, string $title): void
+{
+    ?>
+    <div class="vb-cal">
+        <div class="vb-cal-head">
+            <span><?= e($title) ?></span>
+            <span class="vb-cal-count"><?= count($matches) ?> partite</span>
+        </div>
+        <?php foreach ($matches as $m): ?>
+        <?php
+        $dt       = !empty($m['data_iso']) ? new DateTime($m['data_iso']) : null;
+        $ttHome   = isTikiTakaTeam($m['squadra_casa'] ?? '');
+        $opponent = $ttHome ? ($m['squadra_ospite'] ?? '') : ($m['squadra_casa'] ?? '');
+        $played   = isPlayed($m);
+        $ttWon    = $m['tiki_taka_won'] ?? null;
+        $sets     = $played ? parseSetDetails($m['dettagli'] ?? '') : [];
+        ?>
+        <div class="vb-cal-row <?= $played ? 'is-played' : '' ?>">
+            <div class="vb-cal-date">
+                <div class="vb-cal-day"><?= $dt ? $dt->format('d') : '–' ?></div>
+                <div class="vb-cal-mon"><?= $dt ? itMonth($dt) : '' ?></div>
+            </div>
+            <div class="vb-cal-info">
+                <div class="vb-cal-teams"><?= e($opponent) ?></div>
+                <div class="vb-cal-comp">
+                    <span class="vb-pill <?= $ttHome ? 'home' : 'away' ?>"><?= icon($ttHome ? 'house' : 'bus', 10) ?><?= $ttHome ? 'Casa' : 'Trasferta' ?></span>
+                    G<?= e($m['giornata'] ?? '') ?>
+                </div>
+            </div>
+            <?php if ($played): ?>
+                <div class="vb-cal-result">
+                    <div class="vb-results-score <?= $ttWon === true ? 'win' : ($ttWon === false ? 'loss' : '') ?>">
+                        <?= e(str_replace(' ', '', $m['risultato'])) ?>
+                    </div>
+                    <div class="vb-results-dots" aria-hidden="true">
+                        <?php foreach ($sets as $s): ?>
+                        <?php $ttWonSet = $ttHome ? ($s[0] > $s[1]) : ($s[1] > $s[0]); ?>
+                        <div class="vb-fd <?= $ttWonSet ? 'vb-fw' : 'vb-fl' ?>"></div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="vb-cal-time"><?= $dt ? icon('clock', 12) . ' ' . $dt->format('H:i') : '' ?></div>
+            <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php
+}
+
+/*
+ * ── VALORI CALCOLATI ─────────────────────────────────────────
+ */
+
+/* Etichette campionato e stagione (con valori di riserva se fetch.php non manda "meta") */
+$campionato = campLabel($meta['campionato'] ?? 'Campionato Regionale FVG');
+$stagione   = str_replace(' ', '', $meta['stagione'] ?? '');
+
+/* Data dell'ultimo aggiornamento dei dati, es. "23/10/2026 19:40" */
+$aggiornato = !empty($meta['aggiornato_il']) ? (new DateTime($meta['aggiornato_il']))->format('d/m/Y H:i') : '';
+
+/* Forma recente: true/false (vinta/persa) delle ultime 5 partite */
 $recentForm = [];
 foreach (array_slice($playedMatches, 0, 5) as $m) {
     if (isset($m['tiki_taka_won'])) {
-        $recentForm[] = $m['tiki_taka_won']; /* true o false */
+        $recentForm[] = $m['tiki_taka_won'];
     }
 }
 
-/* Numero totale di squadre in classifica (serve per colorare retrocessione) */
 $totalTeams = count($standings);
-
-/* L'ultima partita giocata è la prima dell'array (già ordinato dalla più recente) */
-$lastMatch = $playedMatches[0] ?? null;
+$giornata   = $standings ? max(array_map('intval', array_column($standings, 'pg'))) : 0;
+$lastMatch  = $playedMatches[0] ?? null;
 
 /* true se il campionato è concluso: nessuna partita futura ma ci sono partite giocate */
 $seasonEnded = empty($futureMatches) && !empty($playedMatches);
+
+/* Calendario completo in ordine cronologico: giocate (dalla più vecchia) + future */
+$allMatches = array_merge(array_reverse($playedMatches), $futureMatches);
+
+/* Link "Aggiungi al calendario" (già validato in fetch.php, può essere "") */
+$calendarUrl = (string) ($meta['calendar_url'] ?? '');
+
+/* Punti cumulati per il grafico (mostrato solo da 2 partite in su) */
+$trend = pointsTrend($playedMatches);
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -203,55 +460,70 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
             font-family: 'Red Hat Display', sans-serif;
             font-size: 16px;
         }
-        body {
-            padding: 0 0 16px 0;
-        }
-        /* Mini header con stats */
+        body { padding: 0 0 16px 0; }
+        /* In tema scuro serve uno sfondo pieno: su una pagina Joomla bianca il testo chiaro sparirebbe */
+        [data-theme="dark"] body { background: var(--bg); }
+
+        /* Header compatto: logo + titolo + tema, sotto le statistiche */
         .em-header {
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            padding: 14px 48px;
             background: var(--card);
             border-bottom: 1px solid var(--border);
-            margin-bottom: 0;
+            padding: 16px 16px 14px;
         }
-        #btn-theme {
+        .em-header::before {
+            content: '';
             position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
+            inset: 0 0 auto 0;
+            height: 4px;
+            background: var(--brand-grad);
         }
+        .em-top {
+            max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .em-top > div { flex: 1; min-width: 0; }
         .em-logo {
-            width: 44px;
-            height: 44px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
+            background: #fff;
+            box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent);
         }
         .em-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--fg);
-            line-height: 1.2;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.15;
         }
         .em-sub {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--muted);
             margin-top: 2px;
         }
         .em-stats {
-            display: flex;
-            gap: 16px;
+            max-width: 860px;
+            margin: 14px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+            gap: 8px;
         }
         .em-stat {
             text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 4px 6px;
         }
         .em-stat-num {
             display: block;
-            font-size: 16px;
+            font-family: var(--font-cond);
+            font-size: 22px;
             font-weight: 700;
             color: var(--accent);
             line-height: 1;
@@ -260,27 +532,22 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
             font-size: 9px;
             color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: .4px;
+            letter-spacing: .5px;
         }
         .em-form {
             display: flex;
-            gap: 3px;
+            gap: 4px;
             align-items: center;
             justify-content: center;
+            height: 22px;
         }
-        /* Tabs senza bordo superiore */
-        .vb-page {
-            padding-top: 0;
-        }
-        .vb-tabs {
-            border-radius: 0;
-        }
+        .vb-page { padding-top: 0; }
+
         /* Card fine stagione */
         .vb-season-over {
-            margin: 12px 0 0;
-            padding: 20px;
+            padding: 22px 16px;
             background: var(--card);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--border);
             text-align: center;
         }
@@ -290,40 +557,17 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
             font-weight: 700;
             letter-spacing: .6px;
             text-transform: uppercase;
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
+            color: #fff;
+            background: var(--brand-grad);
             border-radius: 20px;
-            padding: 3px 12px;
+            padding: 4px 12px;
             margin-bottom: 10px;
         }
-        .vb-season-over-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--fg);
-            margin-bottom: 2px;
-        }
-        .vb-season-over-sub {
-            font-size: 11px;
-            color: var(--muted);
-            margin-bottom: 16px;
-        }
-        .vb-season-over-grid {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .vb-season-over-cell {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .vb-season-over-num {
-            font-size: 22px;
-            font-weight: 900;
-            color: var(--accent);
-            line-height: 1;
-        }
+        .vb-season-over-title { font-size: 16px; font-weight: 700; color: var(--text); }
+        .vb-season-over-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+        .vb-season-over-grid { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        .vb-season-over-cell { display: flex; flex-direction: column; align-items: center; }
+        .vb-season-over-num { font-size: 24px; font-weight: 900; color: var(--accent); line-height: 1; }
         .vb-season-over-lbl {
             font-size: 9px;
             color: var(--muted);
@@ -333,27 +577,35 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
         }
     </style>
     <script>
+        /* Applico subito il tema salvato (default chiaro) per evitare il "lampo" di colori */
         (function () {
-            const saved = localStorage.getItem('vb-theme');
-            const t = saved || 'light';
-            document.documentElement.setAttribute('data-theme', t);
+            let saved = null;
+            try { saved = localStorage.getItem('vb-theme'); } catch (err) {}
+            document.documentElement.setAttribute('data-theme', saved || 'light');
         })();
     </script>
 </head>
 <body>
 
-<!-- ── MINI HEADER ──────────────────────────────────── -->
-<div class="em-header">
-    <img src="assets/tiki_taka_logo.jpg" alt="Logo" class="em-logo">
-    <div>
-        <div class="em-title">Tiki Taka Staranzano</div>
-        <div class="em-sub">Serie D Femminile · Girone Unico FVG</div>
+<!-- ── HEADER ───────────────────────────────────────── -->
+<header class="em-header">
+    <div class="em-top">
+        <img src="assets/tiki_taka_logo.jpg" alt="Logo Pallavolo Staranzano" class="em-logo">
+        <div>
+            <div class="em-title">Tiki Taka Staranzano</div>
+            <div class="em-sub"><?= e($campionato) ?><?= $stagione ? ' · ' . e($stagione) : '' ?></div>
+        </div>
+        <button type="button" class="vb-icon-btn" id="btn-theme" aria-label="Cambia tema chiaro/scuro">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20V4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="currentColor"/>
+            </svg>
+        </button>
     </div>
     <?php if ($tikiTakaStats): ?>
     <div class="em-stats">
         <div class="em-stat">
             <span class="em-stat-num"><?= e($tikiTakaStats['posizione']) ?>°</span>
-            <span class="em-stat-lbl">Pos.</span>
+            <span class="em-stat-lbl">Posizione</span>
         </div>
         <div class="em-stat">
             <span class="em-stat-num"><?= e($tikiTakaStats['punti']) ?></span>
@@ -369,157 +621,45 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
         </div>
         <?php if (!empty($recentForm)): ?>
         <div class="em-stat">
-            <div class="em-form">
+            <div class="em-form" role="img" aria-label="Ultime partite: <?= implode(', ', array_map(fn($w) => $w ? 'vinta' : 'persa', array_reverse($recentForm))) ?>">
                 <?php foreach (array_reverse($recentForm) as $won): ?>
                     <div class="vb-fd <?= $won ? 'vb-fw' : 'vb-fl' ?>"></div>
                 <?php endforeach; ?>
             </div>
-            <span class="em-stat-lbl">Ultime 5 Partite</span>
+            <span class="em-stat-lbl">Forma</span>
         </div>
         <?php endif; ?>
     </div>
     <?php endif; ?>
-    <button class="vb-icon-btn" id="btn-theme" title="Cambia tema">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20V4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="currentColor"/>
-        </svg>
-    </button>
-</div>
+</header>
 
 <!-- ── PAGINA ─────────────────────────────────────── -->
-<div class="vb-page">
+<main class="vb-page">
+
+    <?php if (!empty($meta['stale']) && $aggiornato): ?>
+    <p class="vb-stale">Il portale FIPAV non è al momento consultabile: dati aggiornati al <?= $aggiornato ?>.</p>
+    <?php endif; ?>
 
     <!-- TAB NAVIGATION -->
-    <div class="vb-tabs">
-        <div class="vb-tab active" data-tab="home">Panoramica</div>
-        <div class="vb-tab" data-tab="classifica">Classifica</div>
-        <div class="vb-tab" data-tab="calendario">Calendario</div>
-        <div class="vb-tab" data-tab="risultati">Risultati</div>
+    <div class="vb-tabs" role="tablist" aria-label="Sezioni campionato">
+        <button type="button" class="vb-tab active" role="tab" id="t-home" aria-controls="tab-home" aria-selected="true" data-tab="home">Panoramica</button>
+        <button type="button" class="vb-tab" role="tab" id="t-classifica" aria-controls="tab-classifica" aria-selected="false" tabindex="-1" data-tab="classifica">Classifica</button>
+        <button type="button" class="vb-tab" role="tab" id="t-calendario" aria-controls="tab-calendario" aria-selected="false" tabindex="-1" data-tab="calendario">Calendario</button>
+        <button type="button" class="vb-tab" role="tab" id="t-risultati" aria-controls="tab-risultati" aria-selected="false" tabindex="-1" data-tab="risultati">Risultati</button>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         TAB: PANORAMICA
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-home" class="tab-panel active">
+    <!-- ══════════════ TAB: PANORAMICA ══════════════ -->
+    <section id="tab-home" class="tab-panel active" role="tabpanel" aria-labelledby="t-home">
 
-        <!-- ULTIMA DISPUTATA -->
-        <div class="vb-section-label">Ultima disputata</div>
-        <?php if ($lastMatch): ?>
-        <?php
-        $lTtHome = isTikiTakaTeam($lastMatch['squadra_casa'] ?? '');
-        $lTtWon  = $lastMatch['tiki_taka_won'] ?? null;
-        $lSets   = !empty($lastMatch['dettagli']) ? parseSetDetails($lastMatch['dettagli']) : [];
-        ?>
-        <div class="vb-match">
-            <div class="vb-match-head">
-                <div class="vb-match-meta">
-                    <span><?= fmtDate($lastMatch['data_iso'] ?? null, $lastMatch['data_ora'] ?? '') ?></span>
-                    <span>·</span>
-                    <span>G<?= e($lastMatch['giornata']) ?></span>
-                </div>
-                <?php if ($lTtWon !== null): ?>
-                    <span class="vb-badge <?= $lTtWon ? 'win' : 'loss' ?>"><?= $lTtWon ? 'Vittoria' : 'Sconfitta' ?></span>
-                <?php else: ?>
-                    <span class="vb-badge played">Finita</span>
-                <?php endif; ?>
-            </div>
-            <div class="vb-match-body">
-                <div class="vb-team">
-                    <div class="vb-team-icon <?= $lTtHome ? 'home-icon' : '' ?>">
-                        <?= $lTtHome ? 'TT' : e(initials($lastMatch['squadra_casa'])) ?>
-                    </div>
-                    <div class="vb-team-name <?= ($lTtHome && $lTtWon) ? 'winner' : ($lTtHome && $lTtWon === false ? 'loser' : '') ?>">
-                        <?= e($lastMatch['squadra_casa']) ?>
-                    </div>
-                    <?php if ($lTtHome): ?><div class="vb-team-place vb-home-label">CASA</div><?php endif; ?>
-                </div>
-                <div class="vb-score">
-                    <div class="vb-score-main"><?= e($lastMatch['risultato']) ?></div>
-                    <div class="vb-score-label">SET</div>
-                </div>
-                <div class="vb-team away">
-                    <div class="vb-team-icon <?= !$lTtHome ? 'home-icon' : '' ?>" style="margin-left:auto">
-                        <?= !$lTtHome ? 'TT' : e(initials($lastMatch['squadra_ospite'])) ?>
-                    </div>
-                    <div class="vb-team-name <?= (!$lTtHome && $lTtWon) ? 'winner' : (!$lTtHome && $lTtWon === false ? 'loser' : '') ?>">
-                        <?= e($lastMatch['squadra_ospite']) ?>
-                    </div>
-                    <?php if (!$lTtHome): ?><div class="vb-team-place vb-away-label">TRASFERTA</div><?php endif; ?>
-                </div>
-            </div>
-            <?php if (!empty($lSets)): ?>
-            <div class="vb-sets">
-                <?php foreach ($lSets as $i => $set): ?>
-                <?php $ttWonSet = $lTtHome ? ($set[0] > $set[1]) : ($set[1] > $set[0]); ?>
-                <div class="vb-set-chip <?= $ttWonSet ? 'win' : 'loss' ?>">
-                    <div class="vb-set-lbl"><?= $i + 1 ?>° set</div>
-                    <div class="vb-set-score">
-                        <span class="<?= $set[0] > $set[1] ? 'w' : '' ?>"><?= $set[0] ?></span>
-                        –
-                        <span class="<?= $set[1] > $set[0] ? 'w' : '' ?>"><?= $set[1] ?></span>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-            <div class="vb-match-foot">
-                <span>Gara n° <?= e($lastMatch['gara']) ?></span>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- PROSSIMA GARA -->
-        <div class="vb-section-label" style="margin-top:16px">Prossima gara</div>
+        <h2 class="vb-section-label">Prossima gara</h2>
         <?php if ($nextMatch): ?>
-        <?php
-        $ttHome    = isTikiTakaTeam($nextMatch['squadra_casa'] ?? '');
-        $hasResult = !empty($nextMatch['risultato']) && trim($nextMatch['risultato']) !== '-';
-        $dtObj     = !empty($nextMatch['data_iso']) ? new DateTime($nextMatch['data_iso']) : null;
-        $timeStr   = $dtObj ? $dtObj->format('H:i') : '';
-        ?>
-        <div class="vb-match">
-            <div class="vb-match-head">
-                <div class="vb-match-meta">
-                    <span><?= fmtDate($nextMatch['data_iso'] ?? null, $nextMatch['data_ora'] ?? '') ?></span>
-                    <span>·</span>
-                    <span>G<?= e($nextMatch['giornata']) ?></span>
-                </div>
-                <span class="vb-badge upcoming">In programma</span>
-            </div>
-            <div class="vb-match-body">
-                <div class="vb-team">
-                    <div class="vb-team-icon <?= $ttHome ? 'home-icon' : '' ?>">
-                        <?= $ttHome ? 'TT' : e(initials($nextMatch['squadra_casa'])) ?>
-                    </div>
-                    <div class="vb-team-name"><?= e($nextMatch['squadra_casa']) ?></div>
-                    <?php if ($ttHome): ?><div class="vb-team-place vb-home-label">CASA</div><?php endif; ?>
-                </div>
-                <div class="vb-score">
-                    <?php if ($hasResult): ?>
-                        <div class="vb-score-main"><?= e($nextMatch['risultato']) ?></div>
-                        <div class="vb-score-label">SET</div>
-                    <?php else: ?>
-                        <div class="vb-score-vs">VS</div>
-                        <?php if ($timeStr): ?><div class="vb-score-time"><?= $timeStr ?></div><?php endif; ?>
-                    <?php endif; ?>
-                </div>
-                <div class="vb-team away">
-                    <div class="vb-team-icon <?= !$ttHome ? 'home-icon' : '' ?>" style="margin-left:auto">
-                        <?= !$ttHome ? 'TT' : e(initials($nextMatch['squadra_ospite'])) ?>
-                    </div>
-                    <div class="vb-team-name"><?= e($nextMatch['squadra_ospite']) ?></div>
-                    <?php if (!$ttHome): ?><div class="vb-team-place vb-away-label">TRASFERTA</div><?php endif; ?>
-                </div>
-            </div>
-            <div class="vb-match-foot">
-                <span>Gara n° <?= e($nextMatch['gara']) ?></span>
-            </div>
-        </div>
+            <?php matchCard($nextMatch, false); ?>
+            <?php calButton($calendarUrl); ?>
         <?php elseif ($seasonEnded): ?>
         <div class="vb-season-over">
             <div class="vb-season-over-badge">Campionato concluso</div>
-            <div class="vb-season-over-title">Stagione 2025/26 terminata</div>
-            <div class="vb-season-over-sub">Serie D Femminile · Girone Unico FVG</div>
+            <div class="vb-season-over-title">Stagione <?= e($stagione) ?> terminata</div>
+            <div class="vb-season-over-sub"><?= e($campionato) ?></div>
             <?php if ($tikiTakaStats): ?>
             <div class="vb-season-over-grid">
                 <div class="vb-season-over-cell">
@@ -542,111 +682,72 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
             <?php endif; ?>
         </div>
         <?php else: ?>
-            <p style="color:var(--muted);font-size:13px;padding:12px 0">Nessuna partita in programma.</p>
+            <p class="vb-empty">Nessuna partita in programma.</p>
         <?php endif; ?>
 
-        <!-- PROSSIME GARE -->
-        <?php if (!$seasonEnded && !empty($futureMatches)): ?>
-        <div class="vb-section-label" style="margin-top:16px">Prossime gare</div>
-        <div class="vb-cal">
-            <div class="vb-cal-head">
-                <span>Calendario</span>
-                <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= count($futureMatches) ?> partite rimanenti</span>
-            </div>
-            <?php foreach ($futureMatches as $fm): ?>
-            <?php
-            $fmDt   = !empty($fm['data_iso']) ? new DateTime($fm['data_iso']) : null;
-            $fmDay  = $fmDt ? $fmDt->format('d') : '–';
-            $itMons = ['Jan'=>'Gen','Feb'=>'Feb','Mar'=>'Mar','Apr'=>'Apr','May'=>'Mag',
-                       'Jun'=>'Giu','Jul'=>'Lug','Aug'=>'Ago','Sep'=>'Set',
-                       'Oct'=>'Ott','Nov'=>'Nov','Dec'=>'Dic'];
-            $fmMon  = $fmDt ? str_replace(array_keys($itMons), array_values($itMons), $fmDt->format('M')) : '';
-            $fmTime = $fmDt ? $fmDt->format('H:i') : '';
-            $fmHome = isTikiTakaTeam($fm['squadra_casa'] ?? '');
-            ?>
-            <div class="vb-cal-row">
-                <div class="vb-cal-date">
-                    <div class="vb-cal-day"><?= $fmDay ?></div>
-                    <div class="vb-cal-mon"><?= $fmMon ?></div>
-                </div>
-                <div class="vb-cal-divider"></div>
-                <div class="vb-cal-info">
-                    <div class="vb-cal-teams">
-                        <?php if ($fmHome): ?>
-                            <strong>Tiki Taka</strong><span style="color:var(--muted)"> vs </span><?= e($fm['squadra_ospite']) ?>
-                        <?php else: ?>
-                            <?= e($fm['squadra_casa']) ?><span style="color:var(--muted)"> vs </span><strong>Tiki Taka</strong>
-                        <?php endif; ?>
-                    </div>
-                    <div class="vb-cal-comp">
-                        <?php if ($fmHome): ?>
-                            <span class="vb-cal-home">CASA</span>
-                        <?php else: ?>
-                            TRASFERTA
-                        <?php endif; ?>
-                        · G<?= e($fm['giornata']) ?>
-                    </div>
-                </div>
-                <div class="vb-cal-time"><?= $fmTime ?></div>
-            </div>
-            <?php endforeach; ?>
-        </div>
+        <?php if ($lastMatch): ?>
+        <h2 class="vb-section-label">Ultima disputata</h2>
+        <?php matchCard($lastMatch, true); ?>
         <?php endif; ?>
 
-    </div><!-- /tab-home -->
+        <?php if (count($futureMatches) > 1): ?>
+        <h2 class="vb-section-label">In arrivo</h2>
+        <?php matchList(array_slice($futureMatches, 1, 3), 'Le prossime'); ?>
+        <?php endif; ?>
 
-    <!-- ══════════════════════════════════════════════
-         TAB: CLASSIFICA
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-classifica" class="tab-panel">
+    </section>
 
-        <div class="vb-section-label">Classifica generale</div>
+    <!-- ══════════════ TAB: CLASSIFICA ══════════════ -->
+    <section id="tab-classifica" class="tab-panel" role="tabpanel" aria-labelledby="t-classifica" hidden>
+
+        <h2 class="vb-section-label">Classifica generale</h2>
         <?php if (!empty($standings)): ?>
         <div class="vb-standings">
             <div class="vb-standings-head">
-                <span class="vb-standings-title">Girone Unico · FVG</span>
-                <span class="vb-standings-sub">Giornata <?= e($tikiTakaStats['pg'] ?? '') ?> · <?= $totalTeams ?> squadre</span>
+                <span class="vb-standings-title"><?= e($campionato) ?></span>
+                <span class="vb-standings-sub">Giornata <?= $giornata ?> · <?= $totalTeams ?> squadre</span>
             </div>
+            <div class="vb-table-wrap">
             <table class="vb-table">
                 <thead>
                     <tr>
-                        <th class="tl" style="width:26px">#</th>
-                        <th class="tl">Squadra</th>
-                        <th>Pts</th>
-                        <th>PG</th>
-                        <th>V</th>
-                        <th>S</th>
-                        <th>SF</th>
-                        <th>SS</th>
-                        <th>QS</th>
-                        <th>PF</th>
-                        <th>PS</th>
+                        <th class="tl sticky-pos" scope="col">#</th>
+                        <th class="tl sticky-team" scope="col">Squadra</th>
+                        <th scope="col" title="Punti">Pt</th>
+                        <th scope="col" title="Partite giocate">PG</th>
+                        <th scope="col" title="Vinte">V</th>
+                        <th scope="col" title="Perse">P</th>
+                        <th scope="col" title="Set fatti">SF</th>
+                        <th scope="col" title="Set subiti">SS</th>
+                        <th scope="col" title="Quoziente set">QS</th>
+                        <th scope="col" title="Punti fatti">PF</th>
+                        <th scope="col" title="Punti subiti">PS</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($standings as $team): ?>
                     <?php
-                    $isMe  = isTikiTakaTeam($team['squadra'] ?? '');
-                    $pos   = (int) ($team['posizione'] ?? 99);
+                    $isMe = isTikiTakaTeam($team['squadra'] ?? '');
+                    $pos  = (int) ($team['posizione'] ?? 99);
                     if ($isMe) { $rowCls = 'highlight'; }
-                    elseif ($pos <= 2) { $rowCls = 'promotion'; }
-                    elseif ($pos >= $totalTeams - 1) { $rowCls = 'relegation'; }
+                    elseif ($pos <= $promoSlots) { $rowCls = 'promotion'; }
+                    elseif ($pos > $totalTeams - $relegSlots) { $rowCls = 'relegation'; }
                     else { $rowCls = ''; }
                     ?>
                     <tr class="<?= $rowCls ?>">
-                        <td><span class="vb-pos"><?= e($team['posizione']) ?></span></td>
-                        <td class="tl">
+                        <td class="sticky-pos"><span class="vb-pos"><?= e($team['posizione']) ?></span></td>
+                        <th class="tl sticky-team" scope="row">
                             <div class="vb-team-cell">
                                 <div class="vb-dot <?= $isMe ? 'me' : '' ?>"><?= e(initials($team['squadra'])) ?></div>
                                 <span class="vb-team-cell-name <?= $isMe ? 'vb-me-name' : '' ?>"><?= e($team['squadra']) ?></span>
                             </div>
-                        </td>
+                        </th>
                         <td><span class="vb-pts"><?= e($team['punti']) ?></span></td>
                         <td><?= e($team['pg']) ?></td>
                         <td><?= e($team['pv']) ?></td>
                         <td><?= e($team['pp']) ?></td>
-                        <td style="color:var(--win)"><?= e($team['sf']) ?></td>
-                        <td style="color:var(--loss)"><?= e($team['ss']) ?></td>
+                        <td><?= e($team['sf']) ?></td>
+                        <td><?= e($team['ss']) ?></td>
                         <td><?= e($team['qs']) ?></td>
                         <td><?= e($team['pf']) ?></td>
                         <td><?= e($team['ps']) ?></td>
@@ -654,264 +755,150 @@ $seasonEnded = empty($futureMatches) && !empty($playedMatches);
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
             <div class="vb-legend">
                 <div class="vb-legend-item">
                     <div class="vb-legend-dot" style="background:var(--win)"></div>
-                    <span>Promozione (1°–2°)</span>
+                    <span>Promozione (<?= $promoSlots === 1 ? '1°' : '1°–' . $promoSlots . '°' ?>)</span>
                 </div>
                 <div class="vb-legend-item">
-                    <div class="vb-legend-dot" style="background:var(--accent2)"></div>
+                    <div class="vb-legend-dot" style="background:var(--accent)"></div>
                     <span>Tiki Taka Staranzano</span>
                 </div>
                 <div class="vb-legend-item">
                     <div class="vb-legend-dot" style="background:var(--loss)"></div>
-                    <span>Retrocessione (ultimi 2)</span>
+                    <span>Retrocessione (<?= $relegSlots === 1 ? 'ultima' : 'ultime ' . $relegSlots ?>)</span>
                 </div>
             </div>
-        </div>
-        <?php endif; ?>
-
-    </div><!-- /tab-classifica -->
-
-    <!-- ══════════════════════════════════════════════
-         TAB: CALENDARIO
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-calendario" class="tab-panel">
-
-        <?php if ($seasonEnded): ?>
-        <div class="vb-section-label">Riepilogo stagione</div>
-        <div class="vb-results-list">
-            <div class="vb-results-head">
-                <span>Stagione 2025/26 · Tutte le gare</span>
-                <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= count($playedMatches) ?> partite</span>
-            </div>
-            <?php foreach (array_reverse($playedMatches) as $pm): ?>
-            <?php
-            $pmHome = isTikiTakaTeam($pm['squadra_casa'] ?? '');
-            $pmWon  = $pm['tiki_taka_won'] ?? null;
-            $pmDt   = !empty($pm['data_iso']) ? new DateTime($pm['data_iso']) : null;
-            $pmDate = $pmDt ? $pmDt->format('d/m/y') : e($pm['data_ora'] ?? '');
-            $pmSets = !empty($pm['dettagli']) ? parseSetDetails($pm['dettagli']) : [];
-            ?>
-            <div class="vb-results-row">
-                <div class="vb-results-date"><?= $pmDate ?></div>
-                <div class="vb-results-round">G<?= e($pm['giornata']) ?></div>
-                <div class="vb-results-match">
-                    <?php if ($pmHome): ?>
-                        <strong><?= e($pm['squadra_casa']) ?></strong>
-                        <span style="color:var(--hint)"> vs </span>
-                        <?= e($pm['squadra_ospite']) ?>
-                    <?php else: ?>
-                        <?= e($pm['squadra_casa']) ?>
-                        <span style="color:var(--hint)"> vs </span>
-                        <strong><?= e($pm['squadra_ospite']) ?></strong>
-                    <?php endif; ?>
-                </div>
-                <div class="vb-results-score <?= $pmWon === true ? 'win' : ($pmWon === false ? 'loss' : '') ?>">
-                    <?= e($pm['risultato']) ?>
-                </div>
-                <div class="vb-results-dots">
-                    <?php foreach ($pmSets as $s): ?>
-                    <?php $ttWonSet = $pmHome ? ($s[0] > $s[1]) : ($s[1] > $s[0]); ?>
-                    <div class="vb-fd <?= $ttWonSet ? 'vb-fw' : 'vb-fl' ?>"></div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-        <?php elseif (!empty($futureMatches)): ?>
-        <div class="vb-section-label">Prossime gare</div>
-        <div class="vb-cal">
-            <div class="vb-cal-head">
-                <span>Calendario partite</span>
-                <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= count($futureMatches) ?> partite rimanenti</span>
-            </div>
-            <?php foreach ($futureMatches as $fm): ?>
-            <?php
-            $fmDt   = !empty($fm['data_iso']) ? new DateTime($fm['data_iso']) : null;
-            $fmDay  = $fmDt ? $fmDt->format('d') : '–';
-            $itMons = ['Jan'=>'Gen','Feb'=>'Feb','Mar'=>'Mar','Apr'=>'Apr','May'=>'Mag',
-                       'Jun'=>'Giu','Jul'=>'Lug','Aug'=>'Ago','Sep'=>'Set',
-                       'Oct'=>'Ott','Nov'=>'Nov','Dec'=>'Dic'];
-            $fmMon  = $fmDt ? str_replace(array_keys($itMons), array_values($itMons), $fmDt->format('M')) : '';
-            $fmTime = $fmDt ? $fmDt->format('H:i') : '';
-            $fmHome = isTikiTakaTeam($fm['squadra_casa'] ?? '');
-            ?>
-            <div class="vb-cal-row">
-                <div class="vb-cal-date">
-                    <div class="vb-cal-day"><?= $fmDay ?></div>
-                    <div class="vb-cal-mon"><?= $fmMon ?></div>
-                </div>
-                <div class="vb-cal-divider"></div>
-                <div class="vb-cal-info">
-                    <div class="vb-cal-teams">
-                        <?php if ($fmHome): ?>
-                            <strong>Tiki Taka Staranzano</strong><span style="color:var(--muted)"> vs </span><?= e($fm['squadra_ospite']) ?>
-                        <?php else: ?>
-                            <?= e($fm['squadra_casa']) ?><span style="color:var(--muted)"> vs </span><strong>Tiki Taka Staranzano</strong>
-                        <?php endif; ?>
-                    </div>
-                    <div class="vb-cal-comp">
-                        <?php if ($fmHome): ?>
-                            <span class="vb-cal-home">CASA</span>
-                        <?php else: ?>
-                            TRASFERTA
-                        <?php endif; ?>
-                        · Giornata <?= e($fm['giornata']) ?>
-                    </div>
-                </div>
-                <div class="vb-cal-time"><?= $fmTime ?></div>
-            </div>
-            <?php endforeach; ?>
         </div>
         <?php else: ?>
-            <p style="color:var(--muted);font-size:13px;padding:12px 0">Nessuna partita in programma.</p>
+            <p class="vb-empty">Classifica non ancora disponibile.</p>
         <?php endif; ?>
 
-    </div><!-- /tab-calendario -->
-
-    <!-- ══════════════════════════════════════════════
-         TAB: RISULTATI
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-risultati" class="tab-panel">
-
-        <div class="vb-section-label">Partite disputate</div>
-        <?php if (!empty($playedMatches)): ?>
-        <div class="vb-results-list">
-            <div class="vb-results-head">
-                <span>Stagione 2025/26</span>
-                <span style="font-size:11px;font-weight:400;color:var(--muted)"><?= count($playedMatches) ?> partite</span>
+        <?php if (count($trend) >= 2): ?>
+        <h2 class="vb-section-label">Andamento punti</h2>
+        <div class="vb-chart" data-cy="points-chart">
+            <div class="vb-standings-head">
+                <span class="vb-standings-title"><?= icon('trending-up') ?> Tiki Taka Staranzano</span>
+                <span class="vb-standings-sub">Punti cumulati per giornata</span>
             </div>
-            <?php foreach ($playedMatches as $pm): ?>
-            <?php
-            $pmHome = isTikiTakaTeam($pm['squadra_casa'] ?? '');
-            $pmWon  = $pm['tiki_taka_won'] ?? null;
-            $pmDt   = !empty($pm['data_iso']) ? new DateTime($pm['data_iso']) : null;
-            $pmDate = $pmDt ? $pmDt->format('d/m/y') : e($pm['data_ora'] ?? '');
-            $pmSets = !empty($pm['dettagli']) ? parseSetDetails($pm['dettagli']) : [];
-            ?>
-            <div class="vb-results-row">
-                <div class="vb-results-date"><?= $pmDate ?></div>
-                <div class="vb-results-round">G<?= e($pm['giornata']) ?></div>
-                <div class="vb-results-match">
-                    <?php if ($pmHome): ?>
-                        <strong><?= e($pm['squadra_casa']) ?></strong>
-                        <span style="color:var(--hint)"> vs </span>
-                        <?= e($pm['squadra_ospite']) ?>
-                    <?php else: ?>
-                        <?= e($pm['squadra_casa']) ?>
-                        <span style="color:var(--hint)"> vs </span>
-                        <strong><?= e($pm['squadra_ospite']) ?></strong>
-                    <?php endif; ?>
-                </div>
-                <div class="vb-results-score <?= $pmWon === true ? 'win' : ($pmWon === false ? 'loss' : '') ?>">
-                    <?= e($pm['risultato']) ?>
-                </div>
-                <div class="vb-results-dots">
-                    <?php foreach ($pmSets as $s): ?>
-                    <?php $ttWonSet = $pmHome ? ($s[0] > $s[1]) : ($s[1] > $s[0]); ?>
-                    <div class="vb-fd <?= $ttWonSet ? 'vb-fw' : 'vb-fl' ?>"></div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endforeach; ?>
+            <?= pointsChart($trend) ?>
         </div>
         <?php endif; ?>
 
-    </div><!-- /tab-risultati -->
+    </section>
 
-</div><!-- /vb-page -->
+    <!-- ══════════════ TAB: CALENDARIO ══════════════ -->
+    <section id="tab-calendario" class="tab-panel" role="tabpanel" aria-labelledby="t-calendario" hidden>
+
+        <h2 class="vb-section-label">Calendario <?= e($stagione) ?></h2>
+        <?php calButton($calendarUrl); ?>
+        <?php if (!empty($allMatches)): ?>
+            <?php matchList($allMatches, $seasonEnded ? 'Stagione conclusa · tutte le gare' : 'Tutte le gare'); ?>
+        <?php else: ?>
+            <p class="vb-empty">Calendario non ancora disponibile.</p>
+        <?php endif; ?>
+
+    </section>
+
+    <!-- ══════════════ TAB: RISULTATI ══════════════ -->
+    <section id="tab-risultati" class="tab-panel" role="tabpanel" aria-labelledby="t-risultati" hidden>
+
+        <h2 class="vb-section-label">Partite disputate</h2>
+        <?php if (!empty($playedMatches)): ?>
+            <?php matchList($playedMatches, 'Dalla più recente'); ?>
+        <?php else: ?>
+            <p class="vb-empty">Nessuna partita ancora disputata.</p>
+        <?php endif; ?>
+
+    </section>
+
+    <p class="vb-source">
+        Fonte: portale FIPAV Friuli Venezia Giulia<?= $aggiornato ? ' · aggiornato il ' . $aggiornato : '' ?>
+    </p>
+
+</main>
 
 <script>
 /*
- * ╔══════════════════════════════════════════════════════════════╗
- * ║  JavaScript — Comportamenti interattivi della pagina        ║
- * ╚══════════════════════════════════════════════════════════════╝
- */
-
-/*
  * ── GESTIONE DEI TAB ─────────────────────────────────────────
- * Quando clicco su un tab (Panoramica, Classifica, ecc.):
- *  1. Rimuovo la classe "active" da tutti i tab e da tutti i pannelli
- *  2. Aggiungo "active" solo al tab cliccato e al pannello corrispondente
- *
- * document.querySelectorAll('.vb-tab') → seleziona TUTTI gli elementi con classe "vb-tab"
- * .forEach() → esegue la funzione per ogni elemento trovato
- * addEventListener('click', ...) → ascolta il click su quell'elemento
- * tab.dataset.tab → legge l'attributo data-tab dell'HTML (es. data-tab="classifica")
- * classList.remove('active') → rimuove la classe CSS "active"
- * classList.add('active') → aggiunge la classe CSS "active"
- * document.getElementById('tab-' + target) → trova il div con id="tab-classifica" ecc.
+ * Al click (o con le frecce ← → della tastiera) attivo un tab:
+ * aggiorno classi, aria-selected e mostro solo il pannello giusto.
  */
-document.querySelectorAll('.vb-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        const target = tab.dataset.tab; /* es. "classifica" */
+const tabs = [...document.querySelectorAll('.vb-tab')];
 
-        /* Rimuovo "active" da tutti i tab e pannelli */
-        document.querySelectorAll('.vb-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+function activateTab(tab) {
+    tabs.forEach(t => {
+        const on = t === tab;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById('tab-' + t.dataset.tab);
+        panel.classList.toggle('active', on);
+        panel.hidden = !on;
+    });
+    notifyHeight();
+}
 
-        /* Attivo il tab cliccato e il suo pannello */
-        tab.classList.add('active');
-        document.getElementById('tab-' + target).classList.add('active');
-
-        /* Notifica la pagina genitore (Joomla) della nuova altezza del contenuto */
-        window.parent.postMessage({ iframeHeight: document.body.scrollHeight }, '*');
+tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('keydown', ev => {
+        const step = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0;
+        if (!step) return;
+        const next = tabs[(i + step + tabs.length) % tabs.length];
+        next.focus();
+        activateTab(next);
     });
 });
 
 /*
  * ── BOTTONE TEMA CHIARO/SCURO ────────────────────────────────
- * Quando clicco il bottone tema:
- *  1. Leggo il tema attuale dall'attributo data-theme del tag <html>
- *  2. Calcolo il tema opposto (dark→light oppure light→dark)
- *  3. Applico il nuovo tema impostando data-theme su <html>
- *  4. Salvo la scelta nel localStorage per ricordarla ai prossimi caricamenti
- *
- * document.documentElement → è il tag <html> della pagina
- * getAttribute('data-theme') → legge il valore dell'attributo
- * setAttribute('data-theme', next) → cambia il valore dell'attributo
- * localStorage.setItem() → salva una coppia chiave/valore nel browser (persistente)
- *
- * Il "?" in: condizione ? valoreSe_vero : valoreSe_falso
- * si chiama operatore ternario, è un if/else compatto su una riga.
+ * Inverto il tema su <html data-theme> e lo salvo nel browser.
  */
-const html     = document.documentElement;
-const btnTheme = document.getElementById('btn-theme');
-btnTheme.addEventListener('click', () => {
+const html = document.documentElement;
+document.getElementById('btn-theme').addEventListener('click', () => {
     const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
-    localStorage.setItem('vb-theme', next);
+    try { localStorage.setItem('vb-theme', next); } catch (err) {}
 });
 
 /*
+ * ── COUNTDOWN PROSSIMA GARA ──────────────────────────────────
+ * Ogni minuto ricalcolo il tempo mancante a data-start:
+ *  - prima dell'inizio  → "tra 2g 14h 05m"
+ *  - entro 3 ore dall'inizio → "In corso"
+ *  - dopo → nascondo il countdown
+ */
+function updateCountdowns() {
+    document.querySelectorAll('.vb-countdown').forEach(el => {
+        const diff = new Date(el.dataset.start).getTime() - Date.now();
+        const txt  = el.querySelector('.vb-countdown-txt');
+        el.classList.toggle('is-live', diff <= 0);
+        if (diff > 0) {
+            const min  = Math.floor(diff / 60000);
+            const days = Math.floor(min / 1440);
+            txt.textContent = 'tra ' + (days ? days + 'g ' : '') + Math.floor(min / 60) % 24 + 'h '
+                            + String(min % 60).padStart(2, '0') + 'm';
+        } else if (diff > -3 * 3600000) {
+            txt.textContent = 'In corso';
+        } else {
+            el.hidden = true;
+        }
+    });
+}
+updateCountdowns();
+setInterval(updateCountdowns, 60000);
+
+/*
  * ── AUTO-RESIZE IFRAME ───────────────────────────────────────
- * Quando questo file è caricato dentro un <iframe>, la pagina
- * genitore (Joomla) non sa automaticamente quanto è alta.
- * Mandiamo un "messaggio" con l'altezza reale usando postMessage().
- *
- * window.parent → la finestra che contiene l'iframe (Joomla)
- * postMessage() → invia un messaggio alla finestra genitore
- * document.body.scrollHeight → altezza totale del contenuto in pixel
- * '*' → accetta qualsiasi dominio (necessario perché iframe e pagina
- *        potrebbero essere su domini diversi)
- *
- * La pagina Joomla ascolta questo messaggio e ridimensiona l'iframe.
+ * Mando alla pagina Joomla l'altezza reale del contenuto,
+ * così può ridimensionare l'iframe senza barre di scorrimento.
  */
 function notifyHeight() {
     window.parent.postMessage({ iframeHeight: document.body.scrollHeight }, '*');
 }
 
-/* Notifica l'altezza quando la pagina è completamente caricata */
 window.addEventListener('load', notifyHeight);
-
-/*
- * MutationObserver osserva i cambiamenti nel DOM (struttura HTML) e
- * notifica l'altezza ogni volta che qualcosa cambia (es. cambio tab).
- * subtree: true → osserva anche tutti i discendenti
- * childList: true → rileva aggiunta/rimozione di elementi
- * attributes: true → rileva cambi di attributi (come class="active")
- */
 new MutationObserver(notifyHeight).observe(document.body, { subtree: true, childList: true, attributes: true });
 </script>
 
