@@ -7,12 +7,20 @@
         {
           "name": "🔀 Git Bash 🛠️",
           "commands": ["git pull"]
-        },
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
         {
           "name": "✴️ Claude AI 👾",
           "commands": ["claude"],
           "shouldRunCommands": false
-        },
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
         {
           "name": "🧪 Cypress Test Runner",
           "commands": ["npx cypress open"],
