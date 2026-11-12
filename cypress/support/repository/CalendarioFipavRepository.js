@@ -60,7 +60,7 @@ class CalendarioFipavRepository {
     return this.titoloSezione("Ultima disputata").find(".vb-set-score");
   }
 
-  /* Elementi marcati con data-cy: countdown, add-calendar, points-chart */
+  /* Elementi marcati con data-cy: countdown, add-calendar, points-chart, last-matches, team-name, team-<chiave> */
   elemento(dataCy) {
     return cy.get(`[data-cy="${dataCy}"]`);
   }

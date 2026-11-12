@@ -1,6 +1,6 @@
 # 🏐 Calendario Pallavolo Tiki Taka Staranzano
 
-Widget con calendario, risultati e classifica della **Tiki Taka Staranzano** (Serie C Femminile FVG), mostrato nel sito Joomla della squadra tramite iframe.
+Widget con calendario, risultati e classifica della **Tiki Taka Staranzano** (Serie C Femminile FVG) e delle altre squadre della società (Prima Divisione, Under 19, Under 17), mostrato nel sito Joomla della squadra tramite iframe.
 I dati vengono presi in tempo reale dal [portale FIPAV FVG](https://friulivg.portalefipav.net/risultati-classifiche.aspx) e ridisegnati in una grafica più leggibile e moderna (dato che l'iframe è del dopoguerra).
 
 ## Come funziona 🧐
@@ -25,7 +25,9 @@ portale FIPAV ──► fetch.php ──► JSON (+ cache) ──► embed.php �
 3. Aggiornali come valori di default in cima a `fetch.php`.
 4. **Non** usare `DataDa`: filtra le gare per data e nasconde quelle già giocate.
 
-Le posizioni di promozione e retrocessione evidenziate in classifica si impostano con `$promoSlots` e `$relegSlots` in cima a `embed.php` (Serie C: 1 promossa, 2 retrocesse).
+Le altre squadre stanno nell'elenco `$teams` in cima a `embed.php`: per ognuna si aggiornano `StId` e `CId` allo stesso modo (per i campionati territoriali il portale è [trieste.portalefipav.net](https://trieste.portalefipav.net/risultati-classifiche.aspx), parametro `Portale`). Senza parametri il widget apre la pagina iniziale con la prossima gara di ogni squadra; le singole squadre si scelgono dai bottoni in alto o con uno swipe (`embed.php?team=u19`).
+
+Le posizioni di promozione e retrocessione evidenziate in classifica si impostano con `promo` e `releg` nello stesso elenco (Serie C: 1 promossa, 2 retrocesse; Prima Divisione: 2 e 2; 0 = nessun colore).
 
 ## Sviluppo in locale 💻
 

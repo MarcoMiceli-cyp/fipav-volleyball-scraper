@@ -809,7 +809,7 @@ body {
 /* ── Tabs ────────────────────────────────────────── */
 .vb-tabs {
   display: flex;
-  justify-content: center;
+  justify-content: safe center; /* safe: se le tab non ci stanno partono da sinistra e si scorrono, invece di tagliarsi */
   gap: 2px;
   padding: 16px 0 0;
   border-bottom: 1px solid var(--border);

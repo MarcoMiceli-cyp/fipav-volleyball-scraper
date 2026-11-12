@@ -35,8 +35,14 @@ Given("non c'è nessun dato salvato", () => {
 When("Utente apre il widget", () => {
   calendarioFipavAction.apriWidget();
 });
+When("Utente apre la pagina iniziale", () => {
+  calendarioFipavAction.apriPaginaIniziale();
+});
 When("Utente apre la tab {string}", (nome) => {
   calendarioFipavAction.apriTab(nome);
+});
+When("Utente sceglie la squadra {string}", (chiave) => {
+  calendarioFipavAction.scegliSquadra(chiave);
 });
 When("Utente preme la freccia destra", () => {
   calendarioFipavAction.premiFreccia("ArrowRight");
@@ -75,6 +81,12 @@ Then("l'ultima gara disputata mostra i set {string}", (set) => {
 });
 Then("Il sistema contiene l'elemento {string}", (dataCy) => {
   calendarioFipavCheck.elementoPresente(dataCy);
+});
+Then("Il sistema contiene {int} elementi {string}", (n, dataCy) => {
+  calendarioFipavCheck.numeroElementi(n, dataCy);
+});
+Then("la squadra mostrata è {string}", (nome) => {
+  calendarioFipavCheck.squadraMostrata(nome);
 });
 Then(
   "Il JSON riporta la stagione {string} e campionato {string}",

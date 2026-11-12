@@ -30,6 +30,8 @@ class CalendarioFipavCheck {
   }
 
   elementoPresente(dataCy) { repo.elemento(dataCy).should('exist'); }
+  numeroElementi(n, dataCy) { repo.elemento(dataCy).should('have.length', n); }
+  squadraMostrata(nome) { repo.elemento('team-name').should('have.text', nome); }
 
   /* ── API fetch.php (JSON salvato con alias @json da CalendarioFipavAction.chiediJson) ── */
   jsonStagioneCampionato(stagione, campionato) {

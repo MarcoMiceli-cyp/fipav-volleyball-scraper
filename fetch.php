@@ -39,6 +39,18 @@ $dataDa     = $_GET['DataDa']     ?? '';
 $statoGara  = $_GET['StatoGara']  ?? '';
 
 /*
+ * Portale FIPAV da interrogare = sottodominio di portalefipav.net
+ * (friulivg = campionati regionali, trieste = campionati territoriali).
+ * Accetto solo quelli in elenco: mai un host scelto liberamente da chi chiama.
+ */
+$portale = $_GET['Portale'] ?? 'friulivg';
+if (!in_array($portale, ['friulivg', 'trieste'], true)) {
+    http_response_code(400);
+    echo json_encode(['error' => true, 'message' => 'Portale non valido.'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/*
  * Costruisco l'URL da chiamare su FIPAV.
  * http_build_query() prende un array associativo e lo trasforma
  * nella stringa di parametri URL: ComitatoId=28&StId=2290&...
@@ -54,7 +66,7 @@ $query = http_build_query([
     'btFiltro'   => 'CERCA',
 ]);
 
-$url = 'https://friulivg.portalefipav.net/risultati-classifiche.aspx?' . $query;
+$url = 'https://' . $portale . '.portalefipav.net/risultati-classifiche.aspx?' . $query;
 
 /*
  * ── SISTEMA DI CACHE ─────────────────────────────────────────
@@ -65,7 +77,7 @@ $url = 'https://friulivg.portalefipav.net/risultati-classifiche.aspx?' . $query;
  * dalla query: stessi parametri → stesso nome file cache.
  * Es: md5("ComitatoId=28&StId=2290") → "6f241a1f89b8..."
  */
-$cacheKey      = md5($query);
+$cacheKey      = md5($portale . '|' . $query);
 $cacheFile     = __DIR__ . '/cache/fipav_' . $cacheKey . '.json';
 $cacheDuration = 900; /* secondi = 15 minuti */
 
@@ -526,6 +538,7 @@ foreach ($standings as $team) {
 $result = [
     'error'   => false,
     'filters' => [          /* i parametri usati per questa richiesta */
+        'Portale'    => $portale,
         'ComitatoId' => $comitatoId,
         'StId'       => $stId,
         'CId'        => $cId,

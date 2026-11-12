@@ -14,12 +14,41 @@
  */
 
 /*
- * ── REGOLE CLASSIFICA ────────────────────────────────────────
- * Quante squadre vengono promosse / retrocesse (colori in classifica).
- * DA VERIFICARE sul regolamento FIPAV FVG della Serie C di questa stagione.
+ * ── SQUADRE ──────────────────────────────────────────────────
+ * Una voce per ogni squadra della società: la prima è quella mostrata all'apertura.
+ *   tab    → testo del bottone in alto
+ *   nome   → nome della squadra nell'intestazione
+ *   serie  → etichetta del campionato ('' = la ricavo dal nome FIPAV, vedi campLabel())
+ *   fonte  → comitato FIPAV citato a fondo pagina
+ *   promo / releg → quante squadre vengono promosse / retrocesse (colori in classifica,
+ *                   0 = nessun colore). DA VERIFICARE sul regolamento di ogni stagione.
+ *   params → parametri per fetch.php, copiati dall'URL del portale FIPAV dopo CERCA
+ *            ([] = i default di fetch.php, cioè la Serie C)
  */
-$promoSlots = 1;
-$relegSlots = 2;
+$trieste = ['Portale' => 'trieste', 'ComitatoId' => '47', 'StId' => '2427', 'SId' => '2452', 'PId' => '7285'];
+$teams = [
+    'c'    => ['tab' => 'Serie C',      'nome' => 'Tiki Taka Staranzano',      'serie' => '',                          'fonte' => 'Friuli Venezia Giulia', 'promo' => 1, 'releg' => 2, 'params' => []],
+    '1div' => ['tab' => '1ª Divisione', 'nome' => 'Autoscuola Edi Staranzano', 'serie' => 'Prima Divisione Femminile', 'fonte' => 'Trieste',               'promo' => 2, 'releg' => 2, 'params' => $trieste + ['CId' => '93451']],
+    'u19'  => ['tab' => 'Under 19',     'nome' => 'Geko Gold Staranzano',      'serie' => 'Under 19 Femminile',        'fonte' => 'Trieste',               'promo' => 0, 'releg' => 0, 'params' => $trieste + ['CId' => '93459']],
+    'u17'  => ['tab' => 'Under 17',     'nome' => 'Mavi SRL Staranzano',       'serie' => 'Under 17 Femminile',        'fonte' => 'Trieste',               'promo' => 0, 'releg' => 0, 'params' => $trieste + ['CId' => '93463']],
+];
+
+/*
+ * Squadra scelta con embed.php?team=u19.
+ * Senza ?team (o con una squadra che non esiste) mostro la pagina iniziale:
+ * la prossima gara di tutte le squadre.
+ */
+$teamKey  = $_GET['team'] ?? '';
+$overview = !is_string($teamKey) || !isset($teams[$teamKey]);
+if ($overview) {
+    $teamKey = '';
+}
+/* non $team: quel nome lo usa già il ciclo della classifica */
+$activeTeam = $overview
+    ? ['nome' => 'Pallavolo Staranzano', 'serie' => '', 'fonte' => 'Friuli Venezia Giulia e Trieste', 'promo' => 0, 'releg' => 0]
+    : $teams[$teamKey];
+$promoSlots = $activeTeam['promo'];
+$relegSlots = $activeTeam['releg'];
 
 /*
  * ── RECUPERO DATI DA fetch.php ───────────────────────────────
@@ -31,16 +60,39 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
          . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 
 /*
+ * Funzione: loadTeam()
+ * Chiede a fetch.php i dati di una squadra. Restituisce null se la chiamata fallisce.
  * file_get_contents() scarica l'URL come stringa (il JSON di fetch.php).
  * Il @ davanti sopprime eventuali warning se la chiamata fallisce.
  * json_decode(..., true) converte il JSON in un array PHP associativo.
  */
-$json = @file_get_contents($baseUrl . '/fetch.php');
-$data = $json ? json_decode($json, true) : null;
+function loadTeam(string $baseUrl, array $params): ?array
+{
+    $json = @file_get_contents($baseUrl . '/fetch.php' . ($params ? '?' . http_build_query($params) : ''));
+    $data = $json ? json_decode($json, true) : null;
+    return $data && empty($data['error']) ? $data : null;
+}
 
-/* Se la chiamata fallisce, mostro errore e termino */
-if (!$data || !empty($data['error'])) {
-    echo '<p style="color:#c94f4f;font-family:sans-serif;padding:16px">Dati del campionato momentaneamente non disponibili.</p>';
+if ($overview) {
+    /*
+     * Pagina iniziale: servono i dati di tutte le squadre (una che non risponde resta null).
+     * shortcut: chiamate una dopo l'altra, FIPAV risponde in ~0,2 s e c'è la cache;
+     * con molte più squadre, farle in parallelo con curl_multi.
+     */
+    $overviewData = [];
+    foreach ($teams as $key => $t) {
+        $overviewData[$key] = loadTeam($baseUrl, $t['params']);
+    }
+    /* Stagione e data di aggiornamento: dalla prima squadra che ha risposto */
+    $data = ['meta' => (current(array_filter($overviewData)) ?: [])['meta'] ?? []];
+} else {
+    $data = loadTeam($baseUrl, $activeTeam['params']);
+}
+
+/* Se la chiamata fallisce, mostro errore (con il link per tornare alla pagina iniziale) e termino */
+if (!$data) {
+    echo '<p style="color:#c94f4f;font-family:sans-serif;padding:16px">Dati del campionato momentaneamente non disponibili.'
+       . ' <a href="embed.php">Torna alla pagina iniziale</a></p>';
     exit;
 }
 
@@ -82,9 +134,14 @@ function isTikiTakaTeam(string $name): bool
  * Trasforma il nome FIPAV in un'etichetta leggibile:
  * "Camp. Regionale C F Girone Unico" → "Serie C Femminile · Girone Unico"
  * Se il formato non è riconosciuto, restituisce il nome così com'è.
+ * Con $serie (campionati territoriali e giovanili) uso quella e dal nome FIPAV
+ * prendo solo il girone: "Under 19 F Girone A" → "Under 19 Femminile · Girone A"
  */
-function campLabel(string $c): string
+function campLabel(string $c, string $serie = ''): string
 {
+    if ($serie !== '') {
+        return $serie . (preg_match('/Girone\s+.+$/i', $c, $m) ? ' · ' . $m[0] : '');
+    }
     if (preg_match('/Regionale\s+([A-D])\s+([FM])\b\s*(.*)$/i', $c, $m)) {
         $label = 'Serie ' . strtoupper($m[1]) . (strtoupper($m[2]) === 'F' ? ' Femminile' : ' Maschile');
         return $m[3] !== '' ? $label . ' · ' . $m[3] : $label;
@@ -410,23 +467,23 @@ function matchList(array $matches, string $title): void
  */
 
 /* Etichette campionato e stagione (con valori di riserva se fetch.php non manda "meta") */
-$campionato = campLabel($meta['campionato'] ?? 'Campionato Regionale FVG');
+$campionato = $overview ? 'Prossime gare di tutte le squadre' : campLabel($meta['campionato'] ?? 'Campionato Regionale FVG', $activeTeam['serie']);
 $stagione   = str_replace(' ', '', $meta['stagione'] ?? '');
 
 /* Data dell'ultimo aggiornamento dei dati, es. "23/10/2026 19:40" */
 $aggiornato = !empty($meta['aggiornato_il']) ? (new DateTime($meta['aggiornato_il']))->format('d/m/Y H:i') : '';
 
-/* Forma recente: true/false (vinta/persa) delle ultime 5 partite */
+$totalTeams = count($standings);
+$giornata   = $standings ? max(array_map('intval', array_column($standings, 'pg'))) : 0;
+$lastMatch  = $playedMatches[0] ?? null;
+
+/* Ultime gare: true/false (vinta/persa) delle ultime 5 partite, dalla più recente */
 $recentForm = [];
 foreach (array_slice($playedMatches, 0, 5) as $m) {
     if (isset($m['tiki_taka_won'])) {
         $recentForm[] = $m['tiki_taka_won'];
     }
 }
-
-$totalTeams = count($standings);
-$giornata   = $standings ? max(array_map('intval', array_column($standings, 'pg'))) : 0;
-$lastMatch  = $playedMatches[0] ?? null;
 
 /* true se il campionato è concluso: nessuna partita futura ma ci sono partite giocate */
 $seasonEnded = empty($futureMatches) && !empty($playedMatches);
@@ -445,7 +502,7 @@ $trend = pointsTrend($playedMatches);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiki Taka Staranzano · Campionato</title>
+    <title><?= e($activeTeam['nome']) ?> · Campionato</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -478,6 +535,61 @@ $trend = pointsTrend($playedMatches);
             height: 4px;
             background: var(--brand-grad);
         }
+        /* Cambio squadra con dissolvenza invece dello stacco netto (browser che la supportano) */
+        @view-transition { navigation: auto; }
+
+        /* Bottoni per cambiare squadra: su schermi stretti la riga scorre in orizzontale */
+        .em-teams {
+            max-width: 860px;
+            margin: 0 auto 14px;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .em-teams::-webkit-scrollbar { display: none; }
+        .em-team {
+            flex: 1 0 auto;
+            text-align: center;
+            padding: 7px 8px;
+            border-radius: 20px;
+            border: 1px solid var(--border-md);
+            background: var(--surface);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .em-team:hover { color: var(--text); }
+        .em-team.active {
+            color: #fff;
+            background: var(--brand-grad);
+            border-color: transparent;
+        }
+        /* Pagina iniziale: titolo della squadra a sinistra, link alla sua pagina a destra */
+        .em-ov-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        /* Titolo della squadra: più grande e marcato delle altre etichette, nero su chiaro e bianco su scuro */
+        .em-ov-head .vb-section-label {
+            font-size: 18px;
+            font-weight: 900;
+            color: #000;
+            opacity: 1;
+        }
+        [data-theme="dark"] .em-ov-head .vb-section-label { color: #fff; }
+        .em-ov-head a {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .em-ov-head a:hover { text-decoration: underline; }
         .em-top {
             max-width: 860px;
             margin: 0 auto;
@@ -510,7 +622,7 @@ $trend = pointsTrend($playedMatches);
             max-width: 860px;
             margin: 14px auto 0;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
         }
         .em-stat {
@@ -540,6 +652,23 @@ $trend = pointsTrend($playedMatches);
             align-items: center;
             justify-content: center;
             height: 22px;
+        }
+        /*
+         * Ultime gare: su telefono è una riga intera sotto i 4 numeri (etichetta a sinistra,
+         * pallini a destra), perché "Ultime gare" non sta in una casella stretta.
+         * Da 480px in su torna una casella come le altre.
+         */
+        .em-stat-wide {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 12px;
+        }
+        @media (min-width: 480px) {
+            .em-stats { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); }
+            .em-stat-wide { grid-column: auto; display: block; padding: 8px 4px 6px; }
         }
         .vb-page { padding-top: 0; }
 
@@ -589,10 +718,16 @@ $trend = pointsTrend($playedMatches);
 
 <!-- ── HEADER ───────────────────────────────────────── -->
 <header class="em-header">
+    <nav class="em-teams" aria-label="Squadre">
+        <a class="em-team<?= $overview ? ' active' : '' ?>" data-cy="team-home" href="embed.php"<?= $overview ? ' aria-current="page"' : '' ?>>Tutte</a>
+        <?php foreach ($teams as $key => $t): ?>
+        <a class="em-team<?= $key === $teamKey ? ' active' : '' ?>" data-cy="team-<?= $key ?>" href="embed.php?team=<?= $key ?>"<?= $key === $teamKey ? ' aria-current="page"' : '' ?>><?= e($t['tab']) ?></a>
+        <?php endforeach; ?>
+    </nav>
     <div class="em-top">
         <img src="assets/tiki_taka_logo.jpg" alt="Logo Pallavolo Staranzano" class="em-logo">
         <div>
-            <div class="em-title">Tiki Taka Staranzano</div>
+            <div class="em-title" data-cy="team-name"><?= e($activeTeam['nome']) ?></div>
             <div class="em-sub"><?= e($campionato) ?><?= $stagione ? ' · ' . e($stagione) : '' ?></div>
         </div>
         <button type="button" class="vb-icon-btn" id="btn-theme" aria-label="Cambia tema chiaro/scuro">
@@ -620,13 +755,13 @@ $trend = pointsTrend($playedMatches);
             <span class="em-stat-lbl">Perse</span>
         </div>
         <?php if (!empty($recentForm)): ?>
-        <div class="em-stat">
-            <div class="em-form" role="img" aria-label="Ultime partite: <?= implode(', ', array_map(fn($w) => $w ? 'vinta' : 'persa', array_reverse($recentForm))) ?>">
+        <div class="em-stat em-stat-wide" data-cy="last-matches" title="Ultime gare disputate (la più recente a destra)">
+            <div class="em-form" role="img" aria-label="Ultime gare: <?= implode(', ', array_map(fn($w) => $w ? 'vinta' : 'persa', array_reverse($recentForm))) ?>">
                 <?php foreach (array_reverse($recentForm) as $won): ?>
                     <div class="vb-fd <?= $won ? 'vb-fw' : 'vb-fl' ?>"></div>
                 <?php endforeach; ?>
             </div>
-            <span class="em-stat-lbl">Forma</span>
+            <span class="em-stat-lbl">Ultime gare</span>
         </div>
         <?php endif; ?>
     </div>
@@ -639,6 +774,25 @@ $trend = pointsTrend($playedMatches);
     <?php if (!empty($meta['stale']) && $aggiornato): ?>
     <p class="vb-stale">Il portale FIPAV non è al momento consultabile: dati aggiornati al <?= $aggiornato ?>.</p>
     <?php endif; ?>
+
+    <?php if ($overview): ?>
+
+    <!-- ══════════════ PAGINA INIZIALE: prossima gara di ogni squadra ══════════════ -->
+    <?php foreach ($teams as $key => $t): ?>
+    <?php $d = $overviewData[$key]; ?>
+    <div class="em-ov-head">
+        <h2 class="vb-section-label"><?= e($t['tab']) ?></h2>
+        <a href="embed.php?team=<?= $key ?>" data-cy="more-<?= $key ?>">Classifica e calendario ›</a>
+    </div>
+    <?php if (!empty($d['next_match'])): ?>
+        <?php matchCard($d['next_match'], false); ?>
+        <?php calButton((string) ($d['meta']['calendar_url'] ?? '')); ?>
+    <?php else: ?>
+        <p class="vb-empty"><?= $d ? 'Nessuna partita in programma.' : 'Dati momentaneamente non disponibili.' ?></p>
+    <?php endif; ?>
+    <?php endforeach; ?>
+
+    <?php else: ?>
 
     <!-- TAB NAVIGATION -->
     <div class="vb-tabs" role="tablist" aria-label="Sezioni campionato">
@@ -757,18 +911,22 @@ $trend = pointsTrend($playedMatches);
             </table>
             </div>
             <div class="vb-legend">
+                <?php if ($promoSlots > 0): ?>
                 <div class="vb-legend-item">
                     <div class="vb-legend-dot" style="background:var(--win)"></div>
                     <span>Promozione (<?= $promoSlots === 1 ? '1°' : '1°–' . $promoSlots . '°' ?>)</span>
                 </div>
+                <?php endif; ?>
                 <div class="vb-legend-item">
                     <div class="vb-legend-dot" style="background:var(--accent)"></div>
-                    <span>Tiki Taka Staranzano</span>
+                    <span><?= e($activeTeam['nome']) ?></span>
                 </div>
+                <?php if ($relegSlots > 0): ?>
                 <div class="vb-legend-item">
                     <div class="vb-legend-dot" style="background:var(--loss)"></div>
                     <span>Retrocessione (<?= $relegSlots === 1 ? 'ultima' : 'ultime ' . $relegSlots ?>)</span>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
         <?php else: ?>
@@ -779,7 +937,7 @@ $trend = pointsTrend($playedMatches);
         <h2 class="vb-section-label">Andamento punti</h2>
         <div class="vb-chart" data-cy="points-chart">
             <div class="vb-standings-head">
-                <span class="vb-standings-title"><?= icon('trending-up') ?> Tiki Taka Staranzano</span>
+                <span class="vb-standings-title"><?= icon('trending-up') ?> <?= e($activeTeam['nome']) ?></span>
                 <span class="vb-standings-sub">Punti cumulati per giornata</span>
             </div>
             <?= pointsChart($trend) ?>
@@ -813,8 +971,10 @@ $trend = pointsTrend($playedMatches);
 
     </section>
 
+    <?php endif; ?>
+
     <p class="vb-source">
-        Fonte: portale FIPAV Friuli Venezia Giulia<?= $aggiornato ? ' · aggiornato il ' . $aggiornato : '' ?>
+        Fonte: portale FIPAV <?= e($activeTeam['fonte']) ?><?= $aggiornato ? ' · aggiornato il ' . $aggiornato : '' ?>
     </p>
 
 </main>
@@ -849,6 +1009,35 @@ tabs.forEach((tab, i) => {
         next.focus();
         activateTab(next);
     });
+});
+
+/*
+ * ── SWIPE TRA LE SQUADRE ─────────────────────────────────────
+ * Swipe orizzontale → squadra successiva / precedente (apre lo stesso link dei bottoni in alto).
+ * Ignoro le zone che scorrono già in orizzontale: classifica, tab e bottoni squadra.
+ */
+const teamLinks = [...document.querySelectorAll('.em-team')];
+let swipeStart = null;
+
+/* Su schermi stretti la riga dei bottoni scorre: se serve, la sposto quanto basta a mostrare la squadra aperta */
+const teamNav = document.querySelector('.em-teams');
+const teamOn  = teamNav.querySelector('.active');
+teamNav.scrollLeft = teamOn.offsetLeft + teamOn.offsetWidth - teamNav.offsetLeft - teamNav.clientWidth;
+
+document.addEventListener('touchstart', ev => {
+    const t = ev.touches[0];
+    swipeStart = ev.target.closest('.vb-table-wrap, .vb-tabs, .em-teams') ? null : { x: t.clientX, y: t.clientY };
+}, { passive: true });
+
+document.addEventListener('touchend', ev => {
+    if (!swipeStart) return;
+    const dx = ev.changedTouches[0].clientX - swipeStart.x;
+    const dy = ev.changedTouches[0].clientY - swipeStart.y;
+    swipeStart = null;
+    /* Deve essere uno swipe deciso e orizzontale, non uno scroll della pagina */
+    if (Math.abs(dx) < 70 || Math.abs(dx) < 2 * Math.abs(dy)) return;
+    const next = teamLinks[teamLinks.findIndex(a => a.classList.contains('active')) + (dx < 0 ? 1 : -1)];
+    if (next) location.href = next.href;
 });
 
 /*

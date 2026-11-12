@@ -3,7 +3,8 @@
  */
 import repo from '../repository/CalendarioFipavRepository';
 
-const WIDGET = 'embed.php';
+const HOME = 'embed.php';            /* pagina iniziale: prossima gara di ogni squadra */
+const WIDGET = 'embed.php?team=c';   /* widget della prima squadra (Serie C) */
 const API = 'fetch.php';
 
 class CalendarioFipavAction {
@@ -15,7 +16,9 @@ class CalendarioFipavAction {
 
   /* ── Widget ── */
   apriWidget() { cy.visit(WIDGET); }
+  apriPaginaIniziale() { cy.visit(HOME); }
   apriTab(nome) { repo.nomeTab(nome).click(); }
+  scegliSquadra(chiave) { repo.elemento(`team-${chiave}`).click(); }
   premiFreccia(tasto) { cy.focused().trigger('keydown', { key: tasto }); }
 
   /* ── API ── */
